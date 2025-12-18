@@ -10,6 +10,8 @@ import { Search } from 'lucide-react';
 import { addToCart } from '../store/slices/cartSlice';
 import toast from 'react-hot-toast';
 import ProductCard from '../components/ProductCard';
+import BestSellingProducts from '../components/sections/BestSellingProducts';
+import TrendingProducts from '../components/sections/TrendingProducts';
 
 const categories = [
   'Mobile Phones',
@@ -66,6 +68,14 @@ const Shop = () => {
     <ProductCard key={product._id} product={product} onAddToCart={handleAddToCart} />
   );
 
+  const onAddToCartSection = (product) => {
+    if (!isAuthenticated) {
+      toast.error('Please login to add items to cart');
+      return;
+    }
+    handleAddToCart(product);
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
@@ -118,6 +128,14 @@ const Shop = () => {
           </select>
         </div>
       </div>
+
+      {/* Featured Sections (Page 1 only) */}
+      {!loading && page === 1 && (
+        <div className="space-y-12 mb-12">
+          <BestSellingProducts onAddToCart={onAddToCartSection} />
+          <TrendingProducts onAddToCart={onAddToCartSection} />
+        </div>
+      )}
 
       {/* Products Grid */}
       {loading && (

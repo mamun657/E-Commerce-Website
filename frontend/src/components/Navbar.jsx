@@ -1,12 +1,13 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/slices/authSlice';
-import { ShoppingCart, User, LogOut, Menu, X, Moon, Sun, Globe2, ArrowRight, MapPin } from 'lucide-react';
+import { ShoppingCart, LogOut, Menu, X, Moon, Sun, Globe2, ArrowRight, MapPin } from 'lucide-react';
 import { Button } from './ui/Button';
 import HoverDropdown from './HoverDropdown';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatBDT } from '../utils/currency';
+import { useUser } from '../context/UserContext';
 
 const DropdownLink = ({ to, label, description }) => (
   <Link
@@ -24,7 +25,8 @@ const DropdownLink = ({ to, label, description }) => (
 );
 
 const Navbar = () => {
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const { isAuthenticated, user: authUser } = useSelector((state) => state.auth);
+  const { user } = useUser();
   const { cart } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -56,6 +58,12 @@ const Navbar = () => {
   };
 
   const cartItemCount = cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+  const displayName = user?.name || user?.email;
+  const avatarFallback = (user?.name || user?.email || 'U')?.charAt(0)?.toUpperCase();
+  const userRole = user?.role || authUser?.role;
+  const handleAvatarClick = () => {
+    navigate(isAuthenticated ? '/dashboard' : '/login');
+  };
 
   return (
     <nav className="sticky top-0 z-50 border-b border-border/70 bg-[#0b0f14]/80 backdrop-blur-xl shadow-[0_10px_60px_rgba(0,0,0,0.55)]">
@@ -87,7 +95,7 @@ const Navbar = () => {
                   Dashboard
                   <span className="absolute -bottom-1 left-0 h-0.5 w-full origin-left scale-x-0 bg-gradient-to-r from-emerald-400 via-cyan-400 to-purple-500 transition-transform duration-300 group-hover:scale-x-100" />
                 </Link>
-                {user?.role === 'admin' && (
+                {userRole === 'admin' && (
                   <Link
                     to="/admin"
                     className="group relative text-sm font-semibold text-muted-foreground transition hover:text-primary"
@@ -218,13 +226,22 @@ const Navbar = () => {
               widthClass="w-72"
               caretPosition="right-4"
               trigger={
-                <Link
-                  to={isAuthenticated ? '/dashboard' : '/login'}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-white/5 text-foreground transition hover:border-primary/60 hover:bg-white/10 hover:shadow-[0_0_0_1px_rgba(34,211,238,0.35)]"
+                <button
+                  type="button"
+                  onClick={handleAvatarClick}
+                  className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-border/60 bg-white/5 text-foreground transition hover:border-primary/60 hover:bg-white/10 hover:shadow-[0_0_0_1px_rgba(34,211,238,0.35)]"
                   aria-label="User menu"
                 >
-                  <User size={20} />
-                </Link>
+                  {user?.avatar ? (
+                    <img
+                      src={user.avatar}
+                      alt={displayName || 'Profile avatar'}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-sm font-semibold">{avatarFallback}</span>
+                  )}
+                </button>
               }
             >
               <div className="space-y-4">
@@ -235,7 +252,7 @@ const Navbar = () => {
                   {isAuthenticated ? (
                     <>
                       <p className="mt-2 text-base font-semibold">
-                        {user?.name || user?.email}
+                        {displayName}
                       </p>
                       <p className="text-sm text-muted-foreground">Manage your experience</p>
                     </>
@@ -371,7 +388,7 @@ const Navbar = () => {
                   >
                     Cart ({cartItemCount})
                   </Link>
-                  {user?.role === 'admin' && (
+                  {userRole === 'admin' && (
                     <Link
                       to="/admin"
                       className="block py-2 hover:text-primary transition-colors"

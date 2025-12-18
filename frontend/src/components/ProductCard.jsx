@@ -34,18 +34,20 @@ const ProductCard = ({ product, onAddToCart }) => {
           className="pointer-events-none absolute inset-x-6 top-3 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent"
         />
         <Link to={`/product/${product._id}`} className="block">
-          <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800/40 to-slate-900/60">
-            <img
-              src={primaryImage}
-              alt={product.name}
-              loading="lazy"
-              decoding="async"
-              onError={(event) => {
-                event.currentTarget.onerror = null;
-                event.currentTarget.src = FALLBACK_PRODUCT_IMAGE;
-              }}
-              className="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-105 group-hover:brightness-110"
-            />
+          <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800/40 to-slate-900/60 p-3">
+            <div className="flex h-full w-full items-center justify-center rounded-xl bg-slate-900/60">
+              <img
+                src={primaryImage}
+                alt={product.name}
+                loading="lazy"
+                decoding="async"
+                onError={(event) => {
+                  event.currentTarget.onerror = null;
+                  event.currentTarget.src = FALLBACK_PRODUCT_IMAGE;
+                }}
+                className="h-full w-full object-contain transition duration-500 ease-out group-hover:scale-105 group-hover:brightness-110"
+              />
+            </div>
             {isOutOfStock && (
               <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-rose-500 shadow">
                 Out of Stock

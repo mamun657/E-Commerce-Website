@@ -1,0 +1,47 @@
+const featuredProducts = [
+  {
+    _id: 'demo-best-1',
+    name: 'Aurora Noise-Canceling Headphones',
+    category: 'Headphones',
+    price: 249,
+    compareAtPrice: 299,
+    rating: { average: 4.7 },
+    images: ['https://images.unsplash.com/photo-1585386959984-a4155224a1ad?auto=format&fit=crop&w=600&q=80'],
+    stock: 14,
+    bestSelling: true,
+    trending: true,
+  },
+  {
+    _id: 'demo-best-2',
+    name: 'Zenith Ultra Laptop 14"',
+    category: 'Laptops',
+    price: 1299,
+    compareAtPrice: 1499,
+    rating: { average: 4.8 },
+    images: ['https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=80'],
+    stock: 6,
+    bestSelling: true,
+  },
+  {
+    _id: 'demo-trend-1',
+    name: 'Pulse Fitness Smartwatch',
+    category: 'Smart Watches',
+    price: 199,
+    rating: { average: 4.5 },
+    images: ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80'],
+    stock: 30,
+    trending: true,
+  },
+  {
+    _id: 'demo-trend-2',
+    name: 'Nimbus Running Shoes',
+    category: 'Shoes',
+    price: 139,
+    rating: { average: 4.4 },
+    images: ['https://images.unsplash.com/photo-1542293787938-4d273c2f1ee0?auto=format&fit=crop&w=600&q=80'],
+    stock: 22,
+    trending: true,
+  },
+];
+
+export default featuredProducts;
