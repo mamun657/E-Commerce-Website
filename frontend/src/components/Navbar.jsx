@@ -66,7 +66,7 @@ const Navbar = () => {
             to="/"
             className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-emerald-400 via-cyan-400 to-purple-500 bg-clip-text text-transparent drop-shadow-[0_10px_40px_rgba(56,189,248,0.35)]"
           >
-            ShopHub
+            Kinne Felun
           </Link>
 
           {/* Desktop Navigation */}

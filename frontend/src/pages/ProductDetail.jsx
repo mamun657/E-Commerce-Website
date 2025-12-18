@@ -10,7 +10,7 @@ import { ShoppingCart, Star, Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import api from '../lib/api';
-import { formatBDT } from '../utils/currency';
+import { DEFAULT_EXCHANGE_RATES, formatBDT, formatUSD } from '../utils/currency';
 import { getPrimaryImage, FALLBACK_PRODUCT_IMAGE } from '../utils/image';
 
 const ProductDetail = () => {
@@ -122,10 +122,13 @@ const ProductDetail = () => {
     ? product.images
     : [getPrimaryImage(product.images, FALLBACK_PRODUCT_IMAGE)];
   const displayedImage = galleryImages[selectedImage] || getPrimaryImage(galleryImages, FALLBACK_PRODUCT_IMAGE);
-  const priceDisplay = formatBDT(Number(product.price) || 0);
+  const priceDisplay = formatUSD(Number(product.price) || 0);
   const compareDisplay = product.compareAtPrice
-    ? formatBDT(Number(product.compareAtPrice) || 0, { showUsd: false })
+    ? formatUSD(Number(product.compareAtPrice) || 0)
     : null;
+  const approxBdt = formatBDT(Number(product.price) || 0, {
+    rate: DEFAULT_EXCHANGE_RATES.USD_TO_BDT
+  });
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -192,8 +195,8 @@ const ProductDetail = () => {
                 </span>
               )}
             </div>
-            {priceDisplay.formattedLabel && priceDisplay.formattedLabel !== '-' && (
-              <p className="text-sm text-muted-foreground">Approx. {priceDisplay.formattedLabel}</p>
+            {approxBdt.formattedLabel && approxBdt.formattedLabel !== '-' && (
+              <p className="text-sm text-muted-foreground">Approx. {approxBdt.formattedLabel}</p>
             )}
           </div>
 

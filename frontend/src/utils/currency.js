@@ -1,9 +1,12 @@
-const DEFAULT_EXCHANGE_RATES = {
-  BDT: 1
+export const DEFAULT_EXCHANGE_RATES = {
+  USD: 1,
+  BDT: 1,
+  USD_TO_BDT: 110
 };
 
 const SYMBOLS = {
-  BDT: '৳'
+  BDT: '\u09F3',
+  USD: '$'
 };
 
 const NBSP = '\u202F';
@@ -48,3 +51,6 @@ export const formatPrice = (amount, options = {}) => {
 
 export const formatBDT = (amount, options = {}) =>
   formatPrice(amount, { currency: 'BDT', ...options });
+
+export const formatUSD = (amount, options = {}) =>
+  formatPrice(amount, { currency: 'USD', ...options });

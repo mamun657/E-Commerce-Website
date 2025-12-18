@@ -74,7 +74,7 @@ const Login = () => {
             <CardDescription className="text-center">
               {isLogin
                 ? 'Sign in to your account to continue'
-                : 'Sign up to get started with ShopHub'}
+                : 'Sign up to get started with Kinne Felun'}
             </CardDescription>
           </CardHeader>
           <CardContent>

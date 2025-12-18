@@ -4,14 +4,17 @@ import { motion } from 'framer-motion';
 import { ShoppingCart } from 'lucide-react';
 import { Card, CardContent } from './ui/Card';
 import { Button } from './ui/Button';
-import { formatBDT } from '../utils/currency';
+import { DEFAULT_EXCHANGE_RATES, formatBDT, formatUSD } from '../utils/currency';
 import { getPrimaryImage, FALLBACK_PRODUCT_IMAGE } from '../utils/image';
 
 const ProductCard = ({ product, onAddToCart }) => {
-  const priceDisplay = formatBDT(Number(product.price) || 0);
+  const priceDisplay = formatUSD(Number(product.price) || 0);
   const compareDisplay = product.compareAtPrice
-    ? formatBDT(Number(product.compareAtPrice) || 0, { showUsd: false })
+    ? formatUSD(Number(product.compareAtPrice) || 0)
     : null;
+  const approxBdt = formatBDT(Number(product.price) || 0, {
+    rate: DEFAULT_EXCHANGE_RATES.USD_TO_BDT
+  });
   const ratingValue = Number(product.rating?.average) || 0;
   const ratingLabel = ratingValue > 0 ? ratingValue.toFixed(1) : '0.0';
   const isOutOfStock = (product.stock ?? 0) <= 0;
@@ -80,8 +83,8 @@ const ProductCard = ({ product, onAddToCart }) => {
                 </span>
               )}
             </div>
-            {priceDisplay.formattedLabel && priceDisplay.formattedLabel !== '-' && (
-              <p className="text-xs text-muted-foreground">Approx. {priceDisplay.formattedLabel}</p>
+            {approxBdt.formattedLabel && approxBdt.formattedLabel !== '-' && (
+              <p className="text-xs text-muted-foreground">Approx. {approxBdt.formattedLabel}</p>
             )}
           </div>
 

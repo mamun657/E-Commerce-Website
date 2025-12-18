@@ -20,7 +20,7 @@ const HoverDropdown = ({
 
   return (
     <div
-      className={cn('relative inline-flex z-40', className)}
+      className={cn('relative inline-flex z-40 overflow-visible', className)}
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
       onFocus={() => setOpen(true)}
@@ -29,7 +29,7 @@ const HoverDropdown = ({
       <div className="inline-flex">{trigger}</div>
       <div
         className={cn(
-          'absolute z-50 mt-4 transition-all duration-200 ease-out origin-top',
+          'absolute top-full z-50 pt-3 transition-all duration-200 ease-out origin-top',
           alignmentClass,
           open
             ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
@@ -45,7 +45,7 @@ const HoverDropdown = ({
           />
           <div
             className={cn(
-              'rounded-2xl border border-border/70 bg-[rgba(13,19,33,0.9)] p-4 shadow-[0_20px_70px_rgba(0,0,0,0.55)] backdrop-blur-xl text-foreground',
+              'rounded-2xl border border-border/70 bg-[rgba(13,19,33,0.9)] p-4 shadow-[0_20px_70px_rgba(0,0,0,0.55)] backdrop-blur-xl text-foreground max-h-[70vh] overflow-y-auto overflow-x-visible',
               panelClassName
             )}
           >
