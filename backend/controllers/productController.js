@@ -18,9 +18,10 @@ export const getProducts = async (req, res, next) => {
     } = req.query;
 
     // Build query
-    const query = { active: true };
+    // Use $ne:false so older documents without an explicit `active` flag still appear
+    const query = { active: { $ne: false } };
 
-    if (category) {
+    if (category && category.toLowerCase() !== 'all') {
       query.category = category;
     }
 
@@ -63,9 +64,9 @@ export const getProducts = async (req, res, next) => {
         break;
     }
 
-    // Pagination
-    const pageNum = parseInt(page);
-    const limitNum = parseInt(limit);
+    // Pagination (cap limit to avoid accidental empty pages from huge skips)
+    const pageNum = Number.isNaN(Number(page)) ? 1 : parseInt(page);
+    const limitNum = Math.min(Number.isNaN(Number(limit)) ? 12 : parseInt(limit), 1000);
     const skip = (pageNum - 1) * limitNum;
 
     const products = await Product.find(query)
@@ -135,7 +136,8 @@ export const getProductReviews = async (req, res, next) => {
 // @access  Public
 export const getFeaturedProducts = async (req, res, next) => {
   try {
-    const products = await Product.find({ featured: true, active: true })
+    // Return all active products so shop listings aren't accidentally limited to featured-only items
+    const products = await Product.find({ active: true })
       .limit(8)
       .sort({ createdAt: -1 });
 

@@ -1,17 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { fetchProducts } from '../store/slices/productSlice';
 import { Card, CardContent } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Skeleton } from '../components/ui/Skeleton';
 import { Search } from 'lucide-react';
 import { addToCart } from '../store/slices/cartSlice';
 import toast from 'react-hot-toast';
 import ProductCard from '../components/ProductCard';
-import BestSellingProducts from '../components/sections/BestSellingProducts';
-import TrendingProducts from '../components/sections/TrendingProducts';
 
 const categories = [
   'Mobile Phones',
@@ -36,13 +32,12 @@ const useDebounce = (value, delay = 300) => {
 
 const Shop = () => {
   const dispatch = useDispatch();
-  const { products, loading, pagination } = useSelector((state) => state.products);
+  const { products, loading } = useSelector((state) => state.products);
   const { isAuthenticated } = useSelector((state) => state.auth);
   
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
   const [sort, setSort] = useState('newest');
-  const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search, 300);
 
   useEffect(() => {
@@ -50,11 +45,11 @@ const Shop = () => {
       search: debouncedSearch || undefined,
       category: category || undefined,
       sort,
-      page,
-      limit: 12,
+      // Pull a generous batch to surface all active products on a single grid
+      limit: 1000,
     };
     dispatch(fetchProducts(params));
-  }, [dispatch, debouncedSearch, category, sort, page]);
+  }, [dispatch, debouncedSearch, category, sort]);
 
   const handleAddToCart = async (product) => {
     if (!isAuthenticated) {
@@ -68,16 +63,8 @@ const Shop = () => {
     <ProductCard key={product._id} product={product} onAddToCart={handleAddToCart} />
   );
 
-  const onAddToCartSection = (product) => {
-    if (!isAuthenticated) {
-      toast.error('Please login to add items to cart');
-      return;
-    }
-    handleAddToCart(product);
-  };
-
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">Shop</h1>
         <p className="text-muted-foreground">Discover amazing products</p>
@@ -93,17 +80,13 @@ const Shop = () => {
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
-                setPage(1);
               }}
               className="pl-10"
             />
           </div>
           <select
             value={category}
-            onChange={(e) => {
-              setCategory(e.target.value);
-              setPage(1);
-            }}
+            onChange={(e) => setCategory(e.target.value)}
             className="h-10 px-3 rounded-md border border-input bg-background"
           >
             <option value="">All Categories</option>
@@ -115,10 +98,7 @@ const Shop = () => {
           </select>
           <select
             value={sort}
-            onChange={(e) => {
-              setSort(e.target.value);
-              setPage(1);
-            }}
+            onChange={(e) => setSort(e.target.value)}
             className="h-10 px-3 rounded-md border border-input bg-background"
           >
             <option value="newest">Newest</option>
@@ -129,17 +109,9 @@ const Shop = () => {
         </div>
       </div>
 
-      {/* Featured Sections (Page 1 only) */}
-      {!loading && page === 1 && (
-        <div className="space-y-12 mb-12">
-          <BestSellingProducts onAddToCart={onAddToCartSection} />
-          <TrendingProducts onAddToCart={onAddToCartSection} />
-        </div>
-      )}
-
       {/* Products Grid */}
       {loading && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
           {[...Array(8)].map((_, i) => (
             <Card key={i}>
               <Skeleton className="aspect-square w-full" />
@@ -154,40 +126,22 @@ const Shop = () => {
       )}
 
       {!loading && products.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-xl text-muted-foreground">No products found</p>
-        </div>
+        <Card className="py-16">
+          <CardContent className="text-center">
+            <p className="text-xl text-muted-foreground mb-4">No products found</p>
+            <p className="text-sm text-muted-foreground">
+              {search || category
+                ? 'Try adjusting your search or filter criteria'
+                : 'Products will appear here once they are added'}
+            </p>
+          </CardContent>
+        </Card>
       )}
 
       {!loading && products.length > 0 && (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products.map(renderProductCard)}
-          </div>
-
-          {/* Pagination */}
-          {pagination.pages > 1 && (
-            <div className="flex justify-center gap-2 mt-8">
-              <Button
-                variant="outline"
-                onClick={() => setPage(page - 1)}
-                disabled={page === 1}
-              >
-                Previous
-              </Button>
-              <span className="flex items-center px-4">
-                Page {page} of {pagination.pages}
-              </span>
-              <Button
-                variant="outline"
-                onClick={() => setPage(page + 1)}
-                disabled={page === pagination.pages}
-              >
-                Next
-              </Button>
-            </div>
-          )}
-        </>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          {products.map(renderProductCard)}
+        </div>
       )}
     </div>
   );

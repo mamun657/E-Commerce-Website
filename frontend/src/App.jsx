@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getMe } from './store/slices/authSlice';
 import { fetchCart } from './store/slices/cartSlice';
 import { UserProvider } from './context/UserContext';
+import Footer from './components/Footer';
 
 function App() {
   const dispatch = useDispatch();
@@ -34,6 +35,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Login defaultMode="signup" />} />
         
         <Route element={<Layout />}>
           <Route path="/shop" element={<Shop />} />
@@ -79,6 +81,7 @@ function App() {
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <Footer />
     </UserProvider>
   );
 }

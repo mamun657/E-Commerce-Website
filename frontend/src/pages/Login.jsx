@@ -7,8 +7,8 @@ import { Input } from '../components/ui/Input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/Card';
 import { motion } from 'framer-motion';
 
-const Login = () => {
-  const [isLogin, setIsLogin] = useState(true);
+const Login = ({ defaultMode = 'login' }) => {
+  const [isLogin, setIsLogin] = useState(defaultMode !== 'signup');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -22,18 +22,19 @@ const Login = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/shop');
+      // If the user is already authenticated, send them to the dashboard
+      navigate('/dashboard');
     }
   }, [isAuthenticated, navigate]);
 
   useEffect(() => {
-    const mode = searchParams.get('mode');
+    const mode = searchParams.get('mode') || defaultMode;
     if (mode === 'signup') {
       setIsLogin(false);
     } else if (mode === 'login') {
       setIsLogin(true);
     }
-  }, [searchParams]);
+  }, [searchParams, defaultMode]);
 
   const handleChange = (e) => {
     setFormData({
@@ -52,7 +53,8 @@ const Login = () => {
           register({ name: formData.name.trim(), email: formData.email, password: formData.password })
         ).unwrap();
       }
-      navigate('/shop', { replace: true });
+      // After a successful login or registration, take the user to the dashboard
+      navigate('/dashboard', { replace: true });
     } catch (error) {
       // Notifications are handled inside the auth slice thunks
     }

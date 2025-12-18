@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+// Prefer configured API URL, but fall back to the default backend dev port (5000).
+// If your backend runs on a different port (see backend logs), set VITE_API_URL in frontend/.env.
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const getStoredToken = () => {
