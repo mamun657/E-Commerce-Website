@@ -52,28 +52,25 @@ const Landing = () => {
             </div>
 
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.9 }}
               className="relative flex justify-center lg:justify-end"
             >
               <motion.div
-                className="relative max-w-sm w-full aspect-square [perspective:1200px]"
-                initial={{ rotateX: -2, rotateY: 4, scale: 0.98 }}
-                animate={{ rotateX: 0, rotateY: 0, scale: 1, y: 0 }}
-                whileHover={{ rotateX: -4, rotateY: 6, scale: 1.03, y: -6 }}
-                transition={{ type: 'spring', stiffness: 140, damping: 18 }}
+                className="relative max-w-lg w-full"
+                animate={{ y: [-6, 6, -6] }}
+                transition={{ repeat: Infinity, duration: 6, ease: 'easeInOut' }}
               >
-                <div className="relative h-full rounded-3xl border border-white/10 bg-white/5 backdrop-blur-2xl shadow-[0_25px_90px_rgba(0,0,0,0.7)] ring-1 ring-white/5 overflow-hidden transform-gpu">
-                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/12 via-blue-500/12 to-indigo-500/16 pointer-events-none" />
-                  <Lottie
-                    animationData={shoppingAnimation}
-                    loop
-                    autoplay
-                    className="relative h-full w-full object-contain"
-                  />
-                </div>
-                <div className="absolute -inset-10 -z-10 bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.28),transparent_45%)] blur-3xl" />
+                <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,rgba(56,189,248,0.22),transparent_60%)] blur-3xl scale-125" />
+                <div className="absolute -inset-8 -z-20 bg-[radial-gradient(circle_at_60%_40%,rgba(99,102,241,0.18),transparent_55%)] blur-3xl" />
+                <div className="absolute -inset-20 -z-30 bg-[radial-gradient(circle_at_30%_70%,rgba(16,185,129,0.12),transparent_50%)] blur-3xl" />
+                <Lottie
+                  animationData={shoppingAnimation}
+                  loop
+                  autoplay
+                  className="relative w-full max-h-[480px] drop-shadow-[0_30px_60px_rgba(0,0,0,0.5)]"
+                />
               </motion.div>
             </motion.div>
           </div>
