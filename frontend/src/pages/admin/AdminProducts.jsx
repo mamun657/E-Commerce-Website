@@ -6,6 +6,8 @@ import api from '../../lib/api';
 import toast from 'react-hot-toast';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { Skeleton } from '../../components/ui/Skeleton';
+import { formatBDT } from '../../utils/currency';
+import { getPrimaryImage, FALLBACK_PRODUCT_IMAGE } from '../../utils/image';
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
@@ -112,7 +114,7 @@ const AdminProducts = () => {
           <Card key={product._id}>
             <div className="aspect-square overflow-hidden bg-muted">
               <img
-                src={product.images[0] || '/placeholder.jpg'}
+                src={getPrimaryImage(product?.images, FALLBACK_PRODUCT_IMAGE)}
                 alt={product.name}
                 className="w-full h-full object-cover"
               />
@@ -120,7 +122,7 @@ const AdminProducts = () => {
             <CardContent className="p-4">
               <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
               <p className="text-muted-foreground text-sm mb-2">{product.category}</p>
-              <p className="text-xl font-bold mb-4">${product.price}</p>
+              <p className="text-xl font-bold mb-4">{formatBDT(Number(product.price) || 0).formatted}</p>
               <div className="flex gap-2">
                 <Button
                   variant="outline"

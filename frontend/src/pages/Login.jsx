@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { login, register } from '../store/slices/authSlice';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
@@ -17,6 +17,7 @@ const Login = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { isAuthenticated, loading } = useSelector((state) => state.auth);
 
   useEffect(() => {
@@ -24,6 +25,15 @@ const Login = () => {
       navigate('/shop');
     }
   }, [isAuthenticated, navigate]);
+
+  useEffect(() => {
+    const mode = searchParams.get('mode');
+    if (mode === 'signup') {
+      setIsLogin(false);
+    } else if (mode === 'login') {
+      setIsLogin(true);
+    }
+  }, [searchParams]);
 
   const handleChange = (e) => {
     setFormData({
@@ -34,10 +44,17 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isLogin) {
-      await dispatch(login({ email: formData.email, password: formData.password }));
-    } else {
-      await dispatch(register({ name: formData.name, email: formData.email, password: formData.password }));
+    try {
+      if (isLogin) {
+        await dispatch(login({ email: formData.email, password: formData.password })).unwrap();
+      } else {
+        await dispatch(
+          register({ name: formData.name.trim(), email: formData.email, password: formData.password })
+        ).unwrap();
+      }
+      navigate('/shop', { replace: true });
+    } catch (error) {
+      // Notifications are handled inside the auth slice thunks
     }
   };
 

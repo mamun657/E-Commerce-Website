@@ -6,10 +6,10 @@ import { Card, CardContent } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Skeleton } from '../components/ui/Skeleton';
-import { Search, Filter, ShoppingCart } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Search } from 'lucide-react';
 import { addToCart } from '../store/slices/cartSlice';
 import toast from 'react-hot-toast';
+import ProductCard from '../components/ProductCard';
 
 const categories = [
   'Mobile Phones',
@@ -62,60 +62,8 @@ const Shop = () => {
     await dispatch(addToCart({ productId: product._id, quantity: 1 }));
   };
 
-  const ProductCard = ({ product }) => (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -5 }}
-      transition={{ duration: 0.3 }}
-    >
-      <Card className="overflow-hidden group">
-        <Link to={`/product/${product._id}`}>
-          <div className="aspect-square overflow-hidden bg-muted">
-            <img
-              src={product.images[0] || '/placeholder.jpg'}
-              alt={product.name}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-            />
-          </div>
-        </Link>
-        <CardContent className="p-4">
-          <Link to={`/product/${product._id}`}>
-            <h3 className="font-semibold text-lg mb-2 hover:text-primary transition-colors">
-              {product.name}
-            </h3>
-          </Link>
-          <p className="text-sm text-muted-foreground mb-2">{product.category}</p>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <span className="text-2xl font-bold">${product.price}</span>
-              {product.compareAtPrice && (
-                <span className="text-sm text-muted-foreground line-through ml-2">
-                  ${product.compareAtPrice}
-                </span>
-              )}
-            </div>
-            <div className="flex items-center">
-              <span className="text-sm text-muted-foreground mr-1">★</span>
-              <span className="text-sm font-medium">
-                {product.rating?.average?.toFixed(1) || '0.0'}
-              </span>
-            </div>
-          </div>
-          <Button
-            variant="gradient"
-            className="w-full"
-            onClick={(e) => {
-              e.preventDefault();
-              handleAddToCart(product);
-            }}
-          >
-            <ShoppingCart size={16} className="mr-2" />
-            Add to Cart
-          </Button>
-        </CardContent>
-      </Card>
-    </motion.div>
+  const renderProductCard = (product) => (
+    <ProductCard key={product._id} product={product} onAddToCart={handleAddToCart} />
   );
 
   return (
@@ -196,9 +144,7 @@ const Shop = () => {
       {!loading && products.length > 0 && (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products.map((product) => (
-              <ProductCard key={product._id} product={product} />
-            ))}
+            {products.map(renderProductCard)}
           </div>
 
           {/* Pagination */}

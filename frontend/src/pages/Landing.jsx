@@ -5,7 +5,7 @@ import { ArrowRight } from 'lucide-react';
 
 const Landing = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-gray-900">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0b0f14] via-[#0f172a] to-[#0b0f14]">
       <div className="container mx-auto px-4 text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -13,7 +13,7 @@ const Landing = () => {
           transition={{ duration: 0.8 }}
         >
           <motion.h1
-            className="text-6xl md:text-8xl font-bold mb-6 bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 bg-clip-text text-transparent"
+            className="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight text-transparent bg-gradient-to-r from-emerald-400 via-cyan-400 to-purple-500 bg-clip-text drop-shadow-[0_15px_60px_rgba(56,189,248,0.35)]"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2, duration: 0.8 }}
@@ -22,7 +22,7 @@ const Landing = () => {
           </motion.h1>
 
           <motion.p
-            className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-2xl mx-auto"
+            className="text-lg md:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.8 }}
@@ -53,20 +53,20 @@ const Landing = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8, duration: 0.8 }}
           >
-            <div className="p-6 rounded-lg bg-card border border-border">
-              <h3 className="text-xl font-semibold mb-2">Fast Delivery</h3>
+            <div className="p-6 rounded-2xl glass-surface border border-border/60">
+              <h3 className="text-xl font-semibold mb-2 text-foreground">Fast Delivery</h3>
               <p className="text-muted-foreground">
                 Get your orders delivered quickly and safely
               </p>
             </div>
-            <div className="p-6 rounded-lg bg-card border border-border">
-              <h3 className="text-xl font-semibold mb-2">Secure Payment</h3>
+            <div className="p-6 rounded-2xl glass-surface border border-border/60">
+              <h3 className="text-xl font-semibold mb-2 text-foreground">Secure Payment</h3>
               <p className="text-muted-foreground">
                 Shop with confidence using our secure payment system
               </p>
             </div>
-            <div className="p-6 rounded-lg bg-card border border-border">
-              <h3 className="text-xl font-semibold mb-2">24/7 Support</h3>
+            <div className="p-6 rounded-2xl glass-surface border border-border/60">
+              <h3 className="text-xl font-semibold mb-2 text-foreground">24/7 Support</h3>
               <p className="text-muted-foreground">
                 Our support team is always here to help you
               </p>

@@ -10,6 +10,8 @@ import { ShoppingCart, Star, Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import api from '../lib/api';
+import { formatBDT } from '../utils/currency';
+import { getPrimaryImage, FALLBACK_PRODUCT_IMAGE } from '../utils/image';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -32,6 +34,10 @@ const ProductDetail = () => {
     dispatch(fetchProduct(id));
     fetchReviews();
   }, [id, dispatch]);
+
+  useEffect(() => {
+    setSelectedImage(0);
+  }, [product]);
 
   useEffect(() => {
     if (user && product) {
@@ -112,6 +118,15 @@ const ProductDetail = () => {
     );
   }
 
+  const galleryImages = Array.isArray(product.images) && product.images.length > 0
+    ? product.images
+    : [getPrimaryImage(product.images, FALLBACK_PRODUCT_IMAGE)];
+  const displayedImage = galleryImages[selectedImage] || getPrimaryImage(galleryImages, FALLBACK_PRODUCT_IMAGE);
+  const priceDisplay = formatBDT(Number(product.price) || 0);
+  const compareDisplay = product.compareAtPrice
+    ? formatBDT(Number(product.compareAtPrice) || 0, { showUsd: false })
+    : null;
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid md:grid-cols-2 gap-8">
@@ -119,14 +134,20 @@ const ProductDetail = () => {
         <div>
           <div className="aspect-square overflow-hidden rounded-lg bg-muted mb-4">
             <img
-              src={product.images[selectedImage] || product.images[0]}
+              src={displayedImage}
               alt={product.name}
+              loading="lazy"
+              decoding="async"
+              onError={(event) => {
+                event.currentTarget.onerror = null;
+                event.currentTarget.src = FALLBACK_PRODUCT_IMAGE;
+              }}
               className="w-full h-full object-cover"
             />
           </div>
-          {product.images.length > 1 && (
+          {galleryImages.length > 1 && (
             <div className="grid grid-cols-4 gap-2">
-              {product.images.map((img, idx) => (
+              {galleryImages.map((img, idx) => (
                 <button
                   key={idx}
                   onClick={() => setSelectedImage(idx)}
@@ -134,7 +155,11 @@ const ProductDetail = () => {
                     selectedImage === idx ? 'border-primary' : 'border-transparent'
                   }`}
                 >
-                  <img src={img} alt={`${product.name} ${idx + 1}`} className="w-full h-full object-cover" />
+                  <img
+                    src={img}
+                    alt={`${product.name} ${idx + 1}`}
+                    className="w-full h-full object-cover"
+                  />
                 </button>
               ))}
             </div>
@@ -158,12 +183,17 @@ const ProductDetail = () => {
             <span className="text-muted-foreground">{product.category}</span>
           </div>
 
-          <div className="mb-6">
-            <span className="text-4xl font-bold">${product.price}</span>
-            {product.compareAtPrice && (
-              <span className="text-xl text-muted-foreground line-through ml-2">
-                ${product.compareAtPrice}
-              </span>
+          <div className="mb-6 space-y-1">
+            <div className="flex items-end gap-3">
+              <span className="text-4xl font-bold text-primary">{priceDisplay.formatted}</span>
+              {compareDisplay && (
+                <span className="text-xl text-muted-foreground line-through">
+                  {compareDisplay.formatted}
+                </span>
+              )}
+            </div>
+            {priceDisplay.formattedLabel && priceDisplay.formattedLabel !== '-' && (
+              <p className="text-sm text-muted-foreground">Approx. {priceDisplay.formattedLabel}</p>
             )}
           </div>
 

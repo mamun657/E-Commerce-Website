@@ -8,6 +8,8 @@ import { Package, Heart, User, CreditCard } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import api from '../lib/api';
 import { motion } from 'framer-motion';
+import { formatBDT } from '../utils/currency';
+import { getPrimaryImage, FALLBACK_PRODUCT_IMAGE } from '../utils/image';
 
 const Dashboard = () => {
   const { user } = useSelector((state) => state.auth);
@@ -229,12 +231,12 @@ const Dashboard = () => {
                           <span>
                             {item.name} x {item.quantity}
                           </span>
-                          <span>${(item.price * item.quantity).toFixed(2)}</span>
+                          <span>{formatBDT(item.price * item.quantity).formatted}</span>
                         </div>
                       ))}
                     </div>
                     <div className="flex justify-between items-center pt-4 border-t">
-                      <span className="font-semibold">Total: ${order.totalPrice.toFixed(2)}</span>
+                      <span className="font-semibold">Total: {formatBDT(order.totalPrice).formatted}</span>
                       <Link to={`/dashboard/orders/${order._id}`}>
                         <Button variant="outline" size="sm">
                           View Details
@@ -271,7 +273,7 @@ const Dashboard = () => {
                     <Link to={`/product/${product._id}`}>
                       <div className="aspect-square overflow-hidden bg-muted">
                         <img
-                          src={product.images[0]}
+                          src={getPrimaryImage(product?.images, FALLBACK_PRODUCT_IMAGE)}
                           alt={product.name}
                           className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
                         />
@@ -283,7 +285,7 @@ const Dashboard = () => {
                           {product.name}
                         </h3>
                       </Link>
-                      <p className="text-2xl font-bold mt-2">${product.price}</p>
+                      <p className="text-2xl font-bold mt-2">{formatBDT(Number(product.price) || 0).formatted}</p>
                     </CardContent>
                   </Card>
                 </motion.div>

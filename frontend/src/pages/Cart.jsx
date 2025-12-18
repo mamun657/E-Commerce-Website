@@ -8,6 +8,8 @@ import { Skeleton } from '../components/ui/Skeleton';
 import { Trash2, ShoppingBag } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { formatBDT } from '../utils/currency';
+import { getPrimaryImage, FALLBACK_PRODUCT_IMAGE } from '../utils/image';
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -75,7 +77,7 @@ const Cart = () => {
                   <div className="flex gap-4">
                     <Link to={`/product/${item.product?._id}`}>
                       <img
-                        src={item.product?.images[0]}
+                        src={getPrimaryImage(item.product?.images, FALLBACK_PRODUCT_IMAGE)}
                         alt={item.product?.name}
                         className="w-24 h-24 object-cover rounded-md"
                       />
@@ -118,7 +120,7 @@ const Cart = () => {
                         </div>
                         <div className="flex items-center gap-4">
                           <span className="text-lg font-semibold">
-                            ${(item.product?.price * item.quantity).toFixed(2)}
+                            {formatBDT((item.product?.price || 0) * item.quantity).formatted}
                           </span>
                           <Button
                             variant="ghost"
@@ -145,7 +147,7 @@ const Cart = () => {
               <div className="space-y-2 mb-4">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span>${calculateTotal().toFixed(2)}</span>
+                  <span>{formatBDT(calculateTotal()).formatted}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
@@ -153,11 +155,11 @@ const Cart = () => {
                 </div>
                 <div className="flex justify-between">
                   <span>Tax</span>
-                  <span>$0.00</span>
+                  <span>{formatBDT(0).formatted}</span>
                 </div>
                 <div className="border-t pt-2 mt-2 flex justify-between text-lg font-bold">
                   <span>Total</span>
-                  <span>${calculateTotal().toFixed(2)}</span>
+                  <span>{formatBDT(calculateTotal()).formatted}</span>
                 </div>
               </div>
               <Button

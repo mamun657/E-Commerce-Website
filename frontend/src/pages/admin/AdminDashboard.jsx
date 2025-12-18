@@ -4,6 +4,7 @@ import { Users, Package, ShoppingCart, DollarSign } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import api from '../../lib/api';
 import { Skeleton } from '../../components/ui/Skeleton';
+import { formatBDT } from '../../utils/currency';
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
@@ -57,7 +58,7 @@ const AdminDashboard = () => {
     },
     {
       title: 'Total Revenue',
-      value: `$${stats?.totalRevenue?.toFixed(2) || '0.00'}`,
+      value: formatBDT(Number(stats?.totalRevenue) || 0).formatted,
       icon: DollarSign,
       color: 'text-yellow-600',
     },
@@ -121,7 +122,7 @@ const AdminDashboard = () => {
                       <p className="font-medium">Order #{order._id.slice(-8)}</p>
                       <p className="text-sm text-muted-foreground">{order.user?.name}</p>
                     </div>
-                    <p className="font-semibold">${order.totalPrice.toFixed(2)}</p>
+                    <p className="font-semibold">{formatBDT(order.totalPrice).formatted}</p>
                   </div>
                 ))}
               </div>
@@ -146,7 +147,7 @@ const AdminDashboard = () => {
                         Rating: {product.rating?.average?.toFixed(1) || '0.0'}
                       </p>
                     </div>
-                    <p className="font-semibold">${product.price}</p>
+                    <p className="font-semibold">{formatBDT(Number(product.price) || 0).formatted}</p>
                   </div>
                 ))}
               </div>

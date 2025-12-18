@@ -4,7 +4,7 @@ import { Toaster } from 'react-hot-toast';
 
 const Layout = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-[#0b0f14] via-[#0f172a] to-[#0b0f14]">
       <Navbar />
       <main>
         <Outlet />

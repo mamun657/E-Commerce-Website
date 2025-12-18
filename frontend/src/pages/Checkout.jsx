@@ -9,6 +9,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import toast from 'react-hot-toast';
 import api from '../lib/api';
+import { formatBDT } from '../utils/currency';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_...');
 
@@ -198,7 +199,7 @@ const CheckoutForm = ({ cart, totalPrice, onOrderComplete }) => {
       </div>
 
       <Button type="submit" variant="gradient" className="w-full" disabled={loading || !stripe}>
-        {loading ? 'Processing...' : `Place Order ($${totalPrice.toFixed(2)})`}
+        {loading ? 'Processing...' : `Place Order (${formatBDT(totalPrice).formatted})`}
       </Button>
     </form>
   );
@@ -270,13 +271,13 @@ const Checkout = () => {
                     <span>
                       {item.product?.name} x {item.quantity}
                     </span>
-                    <span>${(item.product?.price * item.quantity).toFixed(2)}</span>
+                    <span>{formatBDT((item.product?.price || 0) * item.quantity).formatted}</span>
                   </div>
                 ))}
               </div>
               <div className="border-t pt-2 mt-2 flex justify-between text-lg font-bold">
                 <span>Total</span>
-                <span>${totalPrice.toFixed(2)}</span>
+                <span>{formatBDT(totalPrice).formatted}</span>
               </div>
             </CardContent>
           </Card>

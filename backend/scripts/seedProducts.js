@@ -4,6 +4,9 @@ import Product from '../models/Product.js';
 
 dotenv.config();
 
+const buildImage = (path) => `https://images.unsplash.com/${path}?auto=format&fit=crop&w=900&q=80`;
+const FALLBACK_IMAGE = buildImage('photo-1498050108023-c5249f4df085');
+
 // 20 real-looking demo products evenly distributed across categories
 const products = [
   // Mobile Phones (3)
@@ -13,7 +16,10 @@ const products = [
     category: 'Mobile Phones',
     price: 1199,
     compareAtPrice: 1299,
-    image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400',
+    images: [
+      buildImage('photo-1511707171634-5f897ff02aa9'),
+      buildImage('photo-1512499617640-c2f999098c01')
+    ],
     stock: 50,
     isFeatured: true,
     brand: 'Apple',
@@ -28,7 +34,10 @@ const products = [
     category: 'Mobile Phones',
     price: 1299,
     compareAtPrice: 1399,
-    image: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=400',
+    images: [
+      buildImage('photo-1502920917128-1aa500764b8a'),
+      buildImage('photo-1510552776732-01acc9a4f294')
+    ],
     stock: 42,
     isFeatured: true,
     brand: 'Samsung',
@@ -43,7 +52,10 @@ const products = [
     category: 'Mobile Phones',
     price: 999,
     compareAtPrice: 1099,
-    image: 'https://images.unsplash.com/photo-1601972602237-8c79241e468b?w=400',
+    images: [
+      buildImage('photo-1504274066651-8d31a536b11a'),
+      buildImage('photo-1503602642458-232111445657')
+    ],
     stock: 38,
     isFeatured: false,
     brand: 'Google',
@@ -60,7 +72,10 @@ const products = [
     category: 'Headphones',
     price: 399,
     compareAtPrice: 449,
-    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
+    images: [
+      buildImage('photo-1517263904808-5dc91e3e7044'),
+      buildImage('photo-1505740106531-4243f3831c78')
+    ],
     stock: 75,
     isFeatured: true,
     brand: 'Sony',
@@ -74,7 +89,10 @@ const products = [
     category: 'Headphones',
     price: 249,
     compareAtPrice: 279,
-    image: 'https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=400',
+    images: [
+      buildImage('photo-1511379938547-c1f69419868d'),
+      buildImage('photo-1511376777868-611b54f68947')
+    ],
     stock: 110,
     isFeatured: true,
     brand: 'Apple',
@@ -88,7 +106,10 @@ const products = [
     category: 'Headphones',
     price: 349,
     compareAtPrice: 399,
-    image: 'https://images.unsplash.com/photo-1484704849700-f032a568e944?w=400',
+    images: [
+      buildImage('photo-1505740420928-5e560c06d30e'),
+      buildImage('photo-1614850523451-b194b6fc2c40')
+    ],
     stock: 58,
     isFeatured: false,
     brand: 'Bose',
@@ -104,7 +125,10 @@ const products = [
     category: 'Clothes',
     price: 29,
     compareAtPrice: 39,
-    image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400',
+    images: [
+      buildImage('photo-1521572163474-6864f9cf17ab'),
+      buildImage('photo-1521572267360-ee0c2909d518')
+    ],
     stock: 210,
     isFeatured: false,
     brand: 'Everyday Supply',
@@ -119,7 +143,10 @@ const products = [
     category: 'Clothes',
     price: 79,
     compareAtPrice: 99,
-    image: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=400',
+    images: [
+      buildImage('photo-1523381210434-271e8be1f52b'),
+      buildImage('photo-1487412720507-e7ab37603c6f')
+    ],
     stock: 155,
     isFeatured: true,
     brand: 'Denim District',
@@ -134,7 +161,10 @@ const products = [
     category: 'Clothes',
     price: 59,
     compareAtPrice: 79,
-    image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400',
+    images: [
+      buildImage('photo-1503341455253-b2e723bb3dbb'),
+      buildImage('photo-1460353581641-37baddab0fa2')
+    ],
     stock: 125,
     isFeatured: false,
     brand: 'Comfort Works',
@@ -151,7 +181,10 @@ const products = [
     category: 'Shoes',
     price: 150,
     compareAtPrice: 180,
-    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400',
+    images: [
+      buildImage('photo-1542291026-7eec264c27ff'),
+      buildImage('photo-1518544889280-37f4ca38e4ab')
+    ],
     stock: 82,
     isFeatured: true,
     brand: 'Nike',
@@ -166,7 +199,10 @@ const products = [
     category: 'Shoes',
     price: 180,
     compareAtPrice: 220,
-    image: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400',
+    images: [
+      buildImage('photo-1528701800489-20be3c21fda3'),
+      buildImage('photo-1520440229-b5fef3d6c1df')
+    ],
     stock: 68,
     isFeatured: true,
     brand: 'Adidas',
@@ -181,7 +217,10 @@ const products = [
     category: 'Shoes',
     price: 95,
     compareAtPrice: 119,
-    image: 'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=400',
+    images: [
+      buildImage('photo-1472289065668-ce650ac443d2'),
+      buildImage('photo-1503602642458-232111445657')
+    ],
     stock: 97,
     isFeatured: false,
     brand: 'Common Line',
@@ -198,7 +237,10 @@ const products = [
     category: 'Laptops',
     price: 2499,
     compareAtPrice: 2699,
-    image: 'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=400',
+    images: [
+      buildImage('photo-1517336714731-489689fd1ca8'),
+      buildImage('photo-1518770660439-4636190af475')
+    ],
     stock: 32,
     isFeatured: true,
     brand: 'Apple',
@@ -213,7 +255,10 @@ const products = [
     category: 'Laptops',
     price: 1899,
     compareAtPrice: 2099,
-    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400',
+    images: [
+      buildImage('photo-1498050108023-c5249f4df085'),
+      buildImage('photo-1483058712412-4245e9b90334')
+    ],
     stock: 44,
     isFeatured: true,
     brand: 'Dell',
@@ -228,7 +273,10 @@ const products = [
     category: 'Laptops',
     price: 2149,
     compareAtPrice: 2299,
-    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400',
+    images: [
+      buildImage('photo-1481277542470-605612bd2d61'),
+      buildImage('photo-1517430816045-df4b7de11d1d')
+    ],
     stock: 36,
     isFeatured: false,
     brand: 'Lenovo',
@@ -245,7 +293,10 @@ const products = [
     category: 'Smart Watches',
     price: 399,
     compareAtPrice: 449,
-    image: 'https://images.unsplash.com/photo-1551816230-ef5deaed4a26?w=400',
+    images: [
+      buildImage('photo-1551816230-ef5deaed4a26'),
+      buildImage('photo-1523275335684-37898b6baf30')
+    ],
     stock: 72,
     isFeatured: true,
     brand: 'Apple',
@@ -260,7 +311,10 @@ const products = [
     category: 'Smart Watches',
     price: 349,
     compareAtPrice: 399,
-    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400',
+    images: [
+      buildImage('photo-1523475472560-d2df97ec485c'),
+      buildImage('photo-1523275335684-37898b6baf30')
+    ],
     stock: 57,
     isFeatured: false,
     brand: 'Samsung',
@@ -277,7 +331,10 @@ const products = [
     category: 'Accessories',
     price: 29,
     compareAtPrice: 39,
-    image: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400',
+    images: [
+      buildImage('photo-1545235616-db3cd822ad8c'),
+      buildImage('photo-1591290619618-904f6dd935e3')
+    ],
     stock: 150,
     isFeatured: false,
     brand: 'Volt Essentials',
@@ -291,7 +348,10 @@ const products = [
     category: 'Accessories',
     price: 59,
     compareAtPrice: 79,
-    image: 'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c7?w=400',
+    images: [
+      buildImage('photo-1601898532138-9f145a2ad69e'),
+      buildImage('photo-1725085815038-279c8139c8a4')
+    ],
     stock: 105,
     isFeatured: false,
     brand: 'PowerTech',
@@ -305,7 +365,10 @@ const products = [
     category: 'Accessories',
     price: 89,
     compareAtPrice: 109,
-    image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400',
+    images: [
+      buildImage('photo-1760376789487-994070337c76'),
+      buildImage('photo-1760376789478-c1023d2dc007')
+    ],
     stock: 85,
     isFeatured: false,
     brand: 'Dockly',
@@ -316,12 +379,17 @@ const products = [
 ];
 
 const formattedProducts = products.map((product, index) => {
-  const { image, isFeatured, ...rest } = product;
+  const { images, image, isFeatured, ...rest } = product;
   const categoryCode = rest.category.split(' ')[0].replace(/[^A-Za-z]/g, '').toUpperCase();
+  const resolvedImages = Array.isArray(images) && images.length
+    ? images
+    : image
+      ? [image]
+      : [FALLBACK_IMAGE];
 
   return {
     ...rest,
-    images: [image],
+    images: resolvedImages,
     featured: isFeatured,
     sku: rest.sku || `SKU-${categoryCode}-${String(index + 1).padStart(3, '0')}`
   };

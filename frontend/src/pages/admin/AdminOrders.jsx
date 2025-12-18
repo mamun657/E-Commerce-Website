@@ -4,6 +4,7 @@ import { Button } from '../../components/ui/Button';
 import api from '../../lib/api';
 import toast from 'react-hot-toast';
 import { Skeleton } from '../../components/ui/Skeleton';
+import { formatBDT } from '../../utils/currency';
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -86,14 +87,14 @@ const AdminOrders = () => {
                     <span>
                       {item.name} x {item.quantity}
                     </span>
-                    <span>${(item.price * item.quantity).toFixed(2)}</span>
+                    <span>{formatBDT(item.price * item.quantity).formatted}</span>
                   </div>
                 ))}
               </div>
 
               <div className="flex justify-between items-center pt-4 border-t">
                 <div>
-                  <p className="font-semibold">Total: ${order.totalPrice.toFixed(2)}</p>
+                  <p className="font-semibold">Total: {formatBDT(order.totalPrice).formatted}</p>
                   <p className="text-sm text-muted-foreground">
                     Payment: {order.paymentMethod.toUpperCase()}
                   </p>

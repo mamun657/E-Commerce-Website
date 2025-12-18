@@ -2,12 +2,47 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../lib/api';
 import toast from 'react-hot-toast';
 
-// Load user from localStorage
-const userFromStorage = localStorage.getItem('user')
-  ? JSON.parse(localStorage.getItem('user'))
-  : null;
+const isBrowser = typeof window !== 'undefined';
 
-const tokenFromStorage = localStorage.getItem('token') || null;
+const getStoredUser = () => {
+  if (!isBrowser) return null;
+  try {
+    const stored = localStorage.getItem('user');
+    return stored ? JSON.parse(stored) : null;
+  } catch (error) {
+    localStorage.removeItem('user');
+    console.error('Failed to parse stored user', error);
+    return null;
+  }
+};
+
+const getStoredToken = () => (isBrowser ? localStorage.getItem('token') : null);
+
+const persistAuthData = (token, user) => {
+  if (!isBrowser) return;
+  localStorage.setItem('token', token);
+  localStorage.setItem('user', JSON.stringify(user));
+  api.defaults.headers.common.Authorization = `Bearer ${token}`;
+};
+
+const clearAuthData = () => {
+  if (!isBrowser) return;
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  delete api.defaults.headers.common.Authorization;
+};
+
+const userFromStorage = getStoredUser();
+let tokenFromStorage = getStoredToken();
+
+if (tokenFromStorage === 'undefined' || tokenFromStorage === 'null') {
+  clearAuthData();
+  tokenFromStorage = null;
+}
+
+if (tokenFromStorage) {
+  api.defaults.headers.common.Authorization = `Bearer ${tokenFromStorage}`;
+}
 
 const initialState = {
   user: userFromStorage,
@@ -23,12 +58,15 @@ export const register = createAsyncThunk(
   async ({ name, email, password }, { rejectWithValue }) => {
     try {
       const response = await api.post('/auth/register', { name, email, password });
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+      const { token, user } = response.data || {};
+      if (!token || !user) {
+        throw new Error('Registration response missing authentication data');
+      }
+      persistAuthData(token, user);
       toast.success('Registration successful!');
       return response.data;
     } catch (error) {
-      const message = error.response?.data?.message || 'Registration failed';
+      const message = error.response?.data?.message || error.message || 'Registration failed';
       toast.error(message);
       return rejectWithValue(message);
     }
@@ -41,12 +79,15 @@ export const login = createAsyncThunk(
   async ({ email, password }, { rejectWithValue }) => {
     try {
       const response = await api.post('/auth/login', { email, password });
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+      const { token, user } = response.data || {};
+      if (!token || !user) {
+        throw new Error('Login response missing authentication data');
+      }
+      persistAuthData(token, user);
       toast.success('Login successful!');
       return response.data;
     } catch (error) {
-      const message = error.response?.data?.message || 'Login failed';
+      const message = error.response?.data?.message || error.message || 'Login failed';
       toast.error(message);
       return rejectWithValue(message);
     }
@@ -59,8 +100,18 @@ export const getMe = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await api.get('/auth/me');
-      return response.data.user;
+      const user = response.data?.user;
+      if (!user) {
+        throw new Error('Unable to load profile');
+      }
+      if (isBrowser) {
+        localStorage.setItem('user', JSON.stringify(user));
+      }
+      return user;
     } catch (error) {
+      if (error.response?.status === 401) {
+        clearAuthData();
+      }
       return rejectWithValue(error.response?.data?.message || 'Failed to get user');
     }
   }
@@ -68,8 +119,7 @@ export const getMe = createAsyncThunk(
 
 // Logout
 export const logout = createAsyncThunk('auth/logout', async () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
+  clearAuthData();
   toast.success('Logged out successfully');
 });
 
@@ -93,6 +143,7 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.isAuthenticated = true;
+        state.error = null;
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
@@ -108,21 +159,36 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.isAuthenticated = true;
+        state.error = null;
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
       // Get Me
+      .addCase(getMe.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(getMe.fulfilled, (state, action) => {
+        state.loading = false;
         state.user = action.payload;
         state.isAuthenticated = true;
+        state.error = null;
+      })
+      .addCase(getMe.rejected, (state, action) => {
+        state.loading = false;
+        state.user = null;
+        state.token = null;
+        state.isAuthenticated = false;
+        state.error = action.payload;
       })
       // Logout
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
         state.token = null;
         state.isAuthenticated = false;
+        state.loading = false;
+        state.error = null;
       });
   },
 });
