@@ -9,18 +9,18 @@ router.post("/", async (req, res) => {
 
     const { message } = req.body;
 
-    // Validate input
+    // ✅ Validate input
     if (!message || typeof message !== "string") {
       return res.status(400).json({ error: "Invalid message" });
     }
 
-    // Validate API key
+    // ✅ Validate API key
     if (!process.env.GROQ_API_KEY) {
       console.error("❌ GROQ_API_KEY missing");
       return res.status(500).json({ error: "API key missing" });
     }
 
-    // Call Groq API
+    // ✅ Call Groq API
     const response = await fetch(
       "https://api.groq.com/openai/v1/chat/completions",
       {
@@ -31,18 +31,33 @@ router.post("/", async (req, res) => {
         },
         body: JSON.stringify({
           model: "llama-3.1-8b-instant", // ✅ WORKING MODEL
+          temperature: 0.3,
           messages: [
+            // 🔥 SYSTEM PROMPT (THIS IS WHERE IT GOES)
             {
               role: "system",
-              content:
-                "You are a helpful e-commerce assistant. Answer clearly and shortly.",
+              content: `
+You are a smart e-commerce shopping assistant.
+
+Rules:
+- Keep replies short and friendly (max 4–5 lines).
+- When user asks for recommendations, suggest 2–3 items immediately.
+- Do NOT ask multiple questions.
+- Ask at most ONE simple follow-up question if needed.
+- Sound confident, like a store assistant.
+
+Example:
+If user asks "Recommend a gift item",
+suggest products directly instead of asking many questions.
+              `,
             },
+
+            // 👤 USER MESSAGE
             {
               role: "user",
               content: message,
             },
           ],
-          temperature: 0.3,
         }),
       }
     );
@@ -60,7 +75,7 @@ router.post("/", async (req, res) => {
       return res.status(500).json({ error: "No reply from Groq" });
     }
 
-    // Send assistant reply to frontend
+    // ✅ Send assistant reply to frontend
     res.json(reply);
   } catch (err) {
     console.error("❌ Chat error:", err);

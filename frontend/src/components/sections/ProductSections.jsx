@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProducts } from '../store/slices/productSlice';
-import { Card, CardContent } from '../components/ui/Card';
-import { Input } from '../components/ui/Input';
-import { Skeleton } from '../components/ui/Skeleton';
+import { fetchProducts } from '../../store/slices/productSlice';
+import { addToCart } from '../../store/slices/cartSlice';
+import { Card, CardContent } from '../ui/Card';
+import { Input } from '../ui/Input';
+import { Skeleton } from '../ui/Skeleton';
 import { Search } from 'lucide-react';
-import { addToCart } from '../store/slices/cartSlice';
 import toast from 'react-hot-toast';
-import ProductCard from '../components/ProductCard';
+import ProductCard from '../ProductCard';
+import { FALLBACK_PRODUCT_IMAGE, getPrimaryImage } from '../../utils/image';
 
 const categories = [
   'Mobile Phones',
@@ -18,6 +19,11 @@ const categories = [
   'Smart Watches',
   'Accessories',
 ];
+
+const DEFAULT_CATEGORY_IMAGES = {
+  Laptops: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=80',
+  Shoes: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=900&q=80',
+};
 
 const useDebounce = (value, delay = 300) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -30,7 +36,7 @@ const useDebounce = (value, delay = 300) => {
   return debouncedValue;
 };
 
-const Shop = () => {
+const ProductSections = () => {
   const dispatch = useDispatch();
   const { products, loading } = useSelector((state) => state.products);
   const { isAuthenticated } = useSelector((state) => state.auth);
@@ -68,6 +74,27 @@ const Shop = () => {
   const renderProductCard = (product) => (
     <ProductCard key={product._id} product={product} onAddToCart={handleAddToCart} />
   );
+
+  const normalizeProduct = (product) => {
+    const normalized = { ...product };
+
+    if (normalized.name === 'Adidas Ultraboost 22') {
+      normalized.category = 'Shoes';
+      normalized.images = [
+        'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=900&q=80',
+      ];
+    }
+
+    const categoryFallback = DEFAULT_CATEGORY_IMAGES[normalized.category] || FALLBACK_PRODUCT_IMAGE;
+    const resolvedImage = getPrimaryImage(normalized.images, categoryFallback);
+
+    return {
+      ...normalized,
+      images: [resolvedImage],
+    };
+  };
+
+  const displayProducts = (products || []).map(normalizeProduct);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -165,11 +192,11 @@ const Shop = () => {
 
       {!loading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {products.map(renderProductCard)}
+          {displayProducts.map(renderProductCard)}
         </div>
       )}
     </div>
   );
 };
 
-export default Shop;
+export default ProductSections;
