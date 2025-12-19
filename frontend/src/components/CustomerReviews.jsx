@@ -1,14 +1,19 @@
 import { FaStar } from "react-icons/fa";
 import abhiAvatar from "../assets/reviews/abhi.jpg";
+import anisulIslam from "../assets/illustrations/anisul-islam.jpg";
 
 const reviews = [
   {
     name: "Saiful Alam",
     text: "The quality and speed of delivery were spot on. The product matches the description perfectly, and the support team was quick to answer my questions.",
+    role: undefined,
+    avatar: abhiAvatar,
   },
   {
-    name: "Priya Mehta",
-    text: "Love the sleek design and the checkout experience was seamless. I’ll definitely be returning for more—great value and reliable service.",
+    name: "Mohammad Anisul Islam",
+    role: "Teacher & Motivational Speaker",
+    avatar: anisulIslam,
+    text: "I am truly impressed by the products on this website. The quality of the products is excellent, and the care and professionalism behind every detail are clearly visible. The founders of this platform are my students, and as a teacher, I feel extremely proud of their work. They have built a high-quality, trustworthy, and well-designed website. Seeing such effort and dedication truly makes me proud.",
   },
 ];
 
@@ -36,12 +41,15 @@ export default function CustomerReviews() {
             >
               <div className="flex items-center gap-4">
                 <img
-                  src={abhiAvatar}
+                  src={review.avatar}
                   alt={`${review.name} avatar`}
                   className="h-12 w-12 rounded-full object-cover ring-2 ring-indigo-500/60"
                 />
                 <div>
                   <p className="text-lg font-semibold text-white">{review.name}</p>
+                  {review.role && (
+                    <p className="text-sm text-slate-400">{review.role}</p>
+                  )}
                   <div className="flex items-center gap-1 text-amber-400" aria-label="5 star rating">
                     {Array.from({ length: 5 }).map((_, idx) => (
                       <FaStar key={idx} />
