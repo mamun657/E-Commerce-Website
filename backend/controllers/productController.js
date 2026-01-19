@@ -218,3 +218,51 @@ export const createReview = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Get related products based on category and price
+// @route   GET /api/products/:id/related
+// @access  Public
+export const getRelatedProducts = async (req, res, next) => {
+  try {
+    // Validate MongoDB ObjectId format
+    if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid product ID format'
+      });
+    }
+
+    // Find the current product
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found'
+      });
+    }
+
+    // Calculate price range (±20%)
+    const currentPrice = Number(product.price) || 0;
+    const minPrice = currentPrice * 0.8;
+    const maxPrice = currentPrice * 1.2;
+
+    // Query for related products
+    const relatedProducts = await Product.find({
+      _id: { $ne: product._id }, // Exclude current product
+      category: product.category, // Same category
+      price: { $gte: minPrice, $lte: maxPrice }, // Price range ±20%
+      active: { $ne: false } // Only active products
+    })
+      .sort({ 'rating.average': -1 }) // Sort by rating (descending)
+      .limit(4); // Limit to 4 products
+
+    res.status(200).json({
+      success: true,
+      count: relatedProducts.length,
+      products: relatedProducts
+    });
+  } catch (error) {
+    next(error);
+  }
+};

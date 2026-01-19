@@ -18,14 +18,16 @@ const Login = ({ defaultMode = 'login' }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { isAuthenticated, loading } = useSelector((state) => state.auth);
+  const { isAuthenticated, loading, user } = useSelector((state) => state.auth);
 
+  // Role-based redirect after successful authentication
   useEffect(() => {
-    if (isAuthenticated) {
-      // If the user is already authenticated, send them to the dashboard
-      navigate('/dashboard');
+    if (isAuthenticated && user) {
+      // Redirect based on user role
+      const redirectPath = user.role === 'admin' ? '/admin' : '/dashboard';
+      navigate(redirectPath, { replace: true });
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, user, navigate]);
 
   useEffect(() => {
     const mode = searchParams.get('mode') || defaultMode;
@@ -53,8 +55,7 @@ const Login = ({ defaultMode = 'login' }) => {
           register({ name: formData.name.trim(), email: formData.email, password: formData.password })
         ).unwrap();
       }
-      // After a successful login or registration, take the user to the dashboard
-      navigate('/dashboard', { replace: true });
+      // Redirect is handled by useEffect based on user role
     } catch (error) {
       // Notifications are handled inside the auth slice thunks
     }

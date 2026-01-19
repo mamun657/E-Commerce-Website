@@ -80,6 +80,9 @@ productSchema.index({ category: 1 });
 productSchema.index({ price: 1 });
 productSchema.index({ 'rating.average': -1 });
 
+// Compound index for related products query (category + price + active + rating)
+productSchema.index({ category: 1, price: 1, active: 1, 'rating.average': -1 });
+
 const Product = mongoose.model('Product', productSchema);
 
 export default Product;

@@ -1,0 +1,59 @@
+﻿Γ£à Connected to MongoDB
+
+≡ƒôª iPhone 15 Pro Max
+   Category: Mobile Phones
+   Images:
+     [0] https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&q=80
+     [1] https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=900&q=80
+
+≡ƒôª Samsung Galaxy S24 Ultra
+   Category: Mobile Phones
+   Images:
+     [0] https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=900&q=80
+     [1] https://images.unsplash.com/photo-1591337676887-a217a6970a8a?auto=format&fit=crop&w=900&q=80
+
+≡ƒôª Google Pixel 8 Pro
+   Category: Mobile Phones
+   Images:
+     [0] https://images.unsplash.com/photo-1591337676887-a217a6970a8a?auto=format&fit=crop&w=900&q=80
+     [1] https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=900&q=80
+
+≡ƒôª Lenovo ThinkPad X1 Carbon Gen 11
+   Category: Laptops
+   Images:
+     [0] https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=900&q=80
+     [1] https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=900&q=80
+
+≡ƒôª Dell XPS 15 Creator Edition
+   Category: Laptops
+   Images:
+     [0] https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=900&q=80
+     [1] https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=80
+
+≡ƒôª Sony WH-1000XM5 Wireless Headphones
+   Category: Headphones
+   Images:
+     [0] https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=80
+     [1] https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&w=900&q=80
+
+≡ƒôª Apple AirPods Pro (2nd Gen)
+   Category: Headphones
+   Images:
+     [0] https://images.unsplash.com/photo-1545127398-14699f92334b?auto=format&fit=crop&w=900&q=80
+     [1] https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=900&q=80
+
+≡ƒôª Premium Cotton T-Shirt
+   Category: Clothes
+   Images:
+     [0] https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80
+
+≡ƒôª Classic Leather Sneakers
+   Category: Shoes
+   Images:
+     [0] https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=900&q=80
+
+≡ƒôª Wireless Charging Pad
+   Category: Accessories
+   Images:
+     [0] https://images.unsplash.com/photo-1545235616-db3cd822ad8c?auto=format&fit=crop&w=900&q=80
+

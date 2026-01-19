@@ -60,7 +60,10 @@ const Navbar = () => {
   const cartItemCount = cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
   const displayName = user?.name || user?.email;
   const avatarFallback = (user?.name || user?.email || 'U')?.charAt(0)?.toUpperCase();
-  const userRole = user?.role || authUser?.role;
+
+  // Use Redux state directly for role detection
+  const isAdmin = authUser?.role === 'admin';
+
   const handleAvatarClick = () => {
     navigate(isAuthenticated ? '/dashboard' : '/login');
   };
@@ -95,7 +98,7 @@ const Navbar = () => {
                   Dashboard
                   <span className="absolute -bottom-1 left-0 h-0.5 w-full origin-left scale-x-0 bg-gradient-to-r from-emerald-400 via-cyan-400 to-purple-500 transition-transform duration-300 group-hover:scale-x-100" />
                 </Link>
-                {userRole === 'admin' && (
+                {isAdmin && (
                   <Link
                     to="/admin"
                     className="group relative text-sm font-semibold text-muted-foreground transition hover:text-primary"
@@ -388,7 +391,7 @@ const Navbar = () => {
                   >
                     Cart ({cartItemCount})
                   </Link>
-                  {userRole === 'admin' && (
+                  {isAdmin && (
                     <Link
                       to="/admin"
                       className="block py-2 hover:text-primary transition-colors"

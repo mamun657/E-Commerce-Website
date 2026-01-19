@@ -12,6 +12,13 @@ import toast from 'react-hot-toast';
 import api from '../lib/api';
 import { DEFAULT_EXCHANGE_RATES, formatBDT, formatUSD } from '../utils/currency';
 import { getPrimaryImage, FALLBACK_PRODUCT_IMAGE } from '../utils/image';
+import ProductCard from '../components/ProductCard';
+import {
+  fetchRelatedProducts,
+  fetchProductsByIds,
+  trackProductView,
+  getViewedProductIds
+} from '../api/productApi';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -19,7 +26,7 @@ const ProductDetail = () => {
   const dispatch = useDispatch();
   const { product, loading } = useSelector((state) => state.products);
   const { isAuthenticated, user } = useSelector((state) => state.auth);
-  
+
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState({
@@ -30,9 +37,17 @@ const ProductDetail = () => {
   const [reviews, setReviews] = useState([]);
   const [isInWishlist, setIsInWishlist] = useState(false);
 
+  // Recommendation system state
+  const [relatedProducts, setRelatedProducts] = useState([]);
+  const [viewedProducts, setViewedProducts] = useState([]);
+  const [loadingRelated, setLoadingRelated] = useState(false);
+  const [loadingViewed, setLoadingViewed] = useState(false);
+
   useEffect(() => {
     dispatch(fetchProduct(id));
     fetchReviews();
+    loadRelatedProducts();
+    loadViewedProducts();
   }, [id, dispatch]);
 
   useEffect(() => {
@@ -44,6 +59,13 @@ const ProductDetail = () => {
       checkWishlist();
     }
   }, [user, product]);
+
+  // Track product view for "People Also Viewed"
+  useEffect(() => {
+    if (id) {
+      trackProductView(id);
+    }
+  }, [id]);
 
   const fetchReviews = async () => {
     try {
@@ -93,6 +115,51 @@ const ProductDetail = () => {
     } catch (error) {
       toast.error('Failed to update wishlist');
     }
+  };
+
+  // Load related products based on category and price
+  const loadRelatedProducts = async () => {
+    if (!id) return;
+
+    setLoadingRelated(true);
+    try {
+      const products = await fetchRelatedProducts(id);
+      setRelatedProducts(products);
+    } catch (error) {
+      console.error('Failed to load related products:', error);
+    } finally {
+      setLoadingRelated(false);
+    }
+  };
+
+  // Load "People Also Viewed" products from localStorage
+  const loadViewedProducts = async () => {
+    if (!id) return;
+
+    setLoadingViewed(true);
+    try {
+      const viewedIds = getViewedProductIds(id); // Exclude current product
+      if (viewedIds.length > 0) {
+        const products = await fetchProductsByIds(viewedIds);
+        setViewedProducts(products);
+      } else {
+        setViewedProducts([]);
+      }
+    } catch (error) {
+      console.error('Failed to load viewed products:', error);
+    } finally {
+      setLoadingViewed(false);
+    }
+  };
+
+  // Handle add to cart from recommendation cards
+  const handleRecommendationAddToCart = async (recommendedProduct) => {
+    if (!isAuthenticated) {
+      toast.error('Please login to add items to cart');
+      navigate('/login');
+      return;
+    }
+    await dispatch(addToCart({ productId: recommendedProduct._id, quantity: 1 }));
   };
 
   if (loading) {
@@ -154,9 +221,8 @@ const ProductDetail = () => {
                 <button
                   key={idx}
                   onClick={() => setSelectedImage(idx)}
-                  className={`aspect-square overflow-hidden rounded-md border-2 ${
-                    selectedImage === idx ? 'border-primary' : 'border-transparent'
-                  }`}
+                  className={`aspect-square overflow-hidden rounded-md border-2 ${selectedImage === idx ? 'border-primary' : 'border-transparent'
+                    }`}
                 >
                   <img
                     src={img}
@@ -213,11 +279,10 @@ const ProductDetail = () => {
                       <button
                         key={size}
                         onClick={() => setSelectedVariant({ ...selectedVariant, size })}
-                        className={`px-4 py-2 border rounded-md ${
-                          selectedVariant.size === size
+                        className={`px-4 py-2 border rounded-md ${selectedVariant.size === size
                             ? 'border-primary bg-primary text-primary-foreground'
                             : 'border-input'
-                        }`}
+                          }`}
                       >
                         {size}
                       </button>
@@ -234,11 +299,10 @@ const ProductDetail = () => {
                       <button
                         key={color}
                         onClick={() => setSelectedVariant({ ...selectedVariant, color })}
-                        className={`px-4 py-2 border rounded-md ${
-                          selectedVariant.color === color
+                        className={`px-4 py-2 border rounded-md ${selectedVariant.color === color
                             ? 'border-primary bg-primary text-primary-foreground'
                             : 'border-input'
-                        }`}
+                          }`}
                       >
                         {color}
                       </button>
@@ -255,11 +319,10 @@ const ProductDetail = () => {
                       <button
                         key={storage}
                         onClick={() => setSelectedVariant({ ...selectedVariant, storage })}
-                        className={`px-4 py-2 border rounded-md ${
-                          selectedVariant.storage === storage
+                        className={`px-4 py-2 border rounded-md ${selectedVariant.storage === storage
                             ? 'border-primary bg-primary text-primary-foreground'
                             : 'border-input'
-                        }`}
+                          }`}
                       >
                         {storage}
                       </button>
@@ -352,6 +415,62 @@ const ProductDetail = () => {
           </Card>
         </div>
       </div>
+
+      {/* Related Products Section */}
+      {relatedProducts.length > 0 && (
+        <div className="mt-16">
+          <h2 className="text-3xl font-bold mb-6">Related Products</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {relatedProducts.map((relatedProduct) => (
+              <ProductCard
+                key={relatedProduct._id}
+                product={relatedProduct}
+                onAddToCart={handleRecommendationAddToCart}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Loading state for Related Products */}
+      {loadingRelated && relatedProducts.length === 0 && (
+        <div className="mt-16">
+          <h2 className="text-3xl font-bold mb-6">Related Products</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[...Array(4)].map((_, idx) => (
+              <Skeleton key={idx} className="aspect-[4/5] rounded-3xl" />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* People Also Viewed Section */}
+      {viewedProducts.length > 0 && (
+        <div className="mt-16">
+          <h2 className="text-3xl font-bold mb-6">People Also Viewed</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {viewedProducts.map((viewedProduct) => (
+              <ProductCard
+                key={viewedProduct._id}
+                product={viewedProduct}
+                onAddToCart={handleRecommendationAddToCart}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Loading state for People Also Viewed */}
+      {loadingViewed && viewedProducts.length === 0 && (
+        <div className="mt-16">
+          <h2 className="text-3xl font-bold mb-6">People Also Viewed</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[...Array(4)].map((_, idx) => (
+              <Skeleton key={idx} className="aspect-[4/5] rounded-3xl" />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

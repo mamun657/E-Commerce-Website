@@ -79,10 +79,24 @@ export const login = createAsyncThunk(
   async ({ email, password }, { rejectWithValue }) => {
     try {
       const response = await api.post('/auth/login', { email, password });
+
+      // DEBUG: Log complete response
+      console.log('=== LOGIN THUNK DEBUG ===');
+      console.log('Full response:', response);
+      console.log('response.data:', response.data);
+      console.log('response.data.token:', response.data?.token);
+      console.log('response.data.user:', response.data?.user);
+      console.log('response.data.user.role:', response.data?.user?.role);
+      console.log('========================');
+
       const { token, user } = response.data || {};
       if (!token || !user) {
         throw new Error('Login response missing authentication data');
       }
+
+      console.log('Extracted user:', user);
+      console.log('Extracted user.role:', user.role);
+
       persistAuthData(token, user);
       toast.success('Login successful!');
       return response.data;
@@ -139,6 +153,11 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(register.fulfilled, (state, action) => {
+        // DEBUG: Verify payload structure
+        console.log('REGISTER PAYLOAD:', action.payload);
+        console.log('USER OBJECT:', action.payload.user);
+        console.log('USER ROLE:', action.payload.user?.role);
+
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
@@ -155,6 +174,11 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
+        // DEBUG: Verify payload structure
+        console.log('LOGIN PAYLOAD:', action.payload);
+        console.log('USER OBJECT:', action.payload.user);
+        console.log('USER ROLE:', action.payload.user?.role);
+
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
@@ -171,7 +195,11 @@ const authSlice = createSlice({
       })
       .addCase(getMe.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        state.user = {
+          ...state.user,
+          ...action.payload,
+          role: action.payload.role ?? state.user?.role,
+        };
         state.isAuthenticated = true;
         state.error = null;
       })
