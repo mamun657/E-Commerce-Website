@@ -163,12 +163,12 @@ const startServer = async () => {
     console.log(`🔍 Starting server on port ${REQUESTED_PORT}...`);
     const server = await startServerOnPort(REQUESTED_PORT);
 
-    const gracefulShutdown = () => {
+    const gracefulShutdown = async () => {
       console.log("\n🛑 Shutting down gracefully...");
-      server.close(() => {
-        mongoose.connection.close(false, () => {
-          process.exit(0);
-        });
+      server.close(async () => {
+        await mongoose.connection.close();
+        console.log("✅ Connections closed");
+        process.exit(0);
       });
     };
 

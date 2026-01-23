@@ -55,6 +55,7 @@ export const register = async (req, res, next) => {
 export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
+    console.log('🔐 Login attempt for:', email);
 
     // Validation
     if (!email || !password) {
@@ -66,6 +67,7 @@ export const login = async (req, res, next) => {
 
     // Check if user exists (including password for comparison)
     const user = await User.findOne({ email }).select('+password');
+    console.log('👤 User found:', !!user);
 
     if (!user) {
       return res.status(401).json({
@@ -74,20 +76,33 @@ export const login = async (req, res, next) => {
       });
     }
 
-    // Verify password
-    const isPasswordMatch = await user.matchPassword(password);
+    // Verify password with timeout protection
+    console.log('🔑 Starting password comparison...');
+    const startTime = Date.now();
+    
+    const isPasswordMatch = await Promise.race([
+      user.matchPassword(password),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Password comparison timeout')), 10000)
+      )
+    ]);
+    
+    console.log(`✅ Password comparison took ${Date.now() - startTime}ms`);
 
     if (!isPasswordMatch) {
+      console.log('❌ Password mismatch');
       return res.status(401).json({
         success: false,
         message: 'Invalid credentials'
       });
     }
+    console.log('✅ Password matched');
 
     // Generate JWT token
     const token = generateToken(user._id);
+    console.log('🎫 Token generated:', token ? 'Yes' : 'No');
 
-    res.status(200).json({
+    const responseData = {
       success: true,
       message: 'Login successful',
       token,
@@ -98,8 +113,12 @@ export const login = async (req, res, next) => {
         role: user.role,
         avatar: user.avatar
       }
-    });
+    };
+    console.log('📤 Sending response:', JSON.stringify(responseData, null, 2));
+
+    res.status(200).json(responseData);
   } catch (error) {
+    console.error('❌ Login error:', error.message);
     next(error);
   }
 };
