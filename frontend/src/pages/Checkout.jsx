@@ -183,6 +183,7 @@ const CheckoutForm = ({ cart, totalPrice, onOrderComplete }) => {
           <div className="mt-4 p-4 border rounded-md">
             <CardElement
               options={{
+                hidePostalCode: true,
                 style: {
                   base: {
                     fontSize: '16px',

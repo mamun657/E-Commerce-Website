@@ -1,12 +1,33 @@
 import Stripe from 'stripe';
 import Order from '../models/Order.js';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+// Lazy initialization of Stripe (to ensure dotenv has loaded)
+let stripe = null;
+const getStripe = () => {
+  if (!stripe && process.env.STRIPE_SECRET_KEY) {
+    stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+  }
+  return stripe;
+};
+
+// Helper to check if Stripe is configured
+const checkStripeConfigured = (res) => {
+  if (!getStripe()) {
+    res.status(503).json({
+      success: false,
+      message: 'Payment service not configured. Please set STRIPE_SECRET_KEY in environment variables.'
+    });
+    return false;
+  }
+  return true;
+};
 
 // @desc    Create Stripe payment intent
 // @route   POST /api/payments/create-intent
 // @access  Private
 export const createPaymentIntent = async (req, res, next) => {
+  if (!checkStripeConfigured(res)) return;
+  
   try {
     const { amount, orderId } = req.body;
 
@@ -18,7 +39,7 @@ export const createPaymentIntent = async (req, res, next) => {
     }
 
     // Create payment intent
-    const paymentIntent = await stripe.paymentIntents.create({
+    const paymentIntent = await getStripe().paymentIntents.create({
       amount: Math.round(amount * 100), // Convert to cents
       currency: 'usd',
       metadata: {
@@ -40,12 +61,14 @@ export const createPaymentIntent = async (req, res, next) => {
 // @route   POST /api/payments/webhook
 // @access  Public (Stripe signature verification)
 export const stripeWebhook = async (req, res, next) => {
+  if (!checkStripeConfigured(res)) return;
+  
   const sig = req.headers['stripe-signature'];
 
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(
+    event = getStripe().webhooks.constructEvent(
       req.body,
       sig,
       process.env.STRIPE_WEBHOOK_SECRET

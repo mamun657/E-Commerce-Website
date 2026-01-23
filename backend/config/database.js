@@ -1,19 +1,5 @@
 import mongoose from 'mongoose';
 
-/**
- * MongoDB Connection Handler
- * 
- * This module handles MongoDB connection using Mongoose.
- * Connection string is read from process.env.MONGO_URI
- * 
- * MongoDB Atlas connection string format:
- * mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<database_name>?retryWrites=true&w=majority
- */
-
-/**
- * Connect to MongoDB Atlas
- * @returns {Promise<boolean>} Returns true if connection successful, false otherwise
- */
 export const connectDB = async () => {
   // Check if MONGO_URI is defined
   if (!process.env.MONGO_URI) {

@@ -2,9 +2,6 @@ import User from '../models/User.js';
 import Cart from '../models/Cart.js';
 import Order from '../models/Order.js';
 
-// @desc    Get user profile
-// @route   GET /api/users/profile
-// @access  Private
 export const getProfile = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);

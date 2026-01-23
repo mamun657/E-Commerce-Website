@@ -67,6 +67,27 @@ const CATEGORY_IMAGE_MAP = {
     'https://images.unsplash.com/photo-1617625802912-cde586faf331?auto=format&fit=crop&w=900&q=80', // Fitness Watch
     'https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?auto=format&fit=crop&w=900&q=80', // Sport Watch
     'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80'  // Luxury Watch
+  ],
+  'LED TV': [
+    'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?auto=format&fit=crop&w=900&q=80', // Modern TV
+    'https://images.unsplash.com/photo-1567690187548-f07b1d7bf5a9?auto=format&fit=crop&w=900&q=80', // Smart TV
+    'https://images.unsplash.com/photo-1461151304267-38535e780c79?auto=format&fit=crop&w=900&q=80', // Living room TV
+    'https://images.unsplash.com/photo-1558888401-3cc1de77652d?auto=format&fit=crop&w=900&q=80', // Flat screen
+    'https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?auto=format&fit=crop&w=900&q=80'  // Home theater
+  ],
+  'Fans': [
+    '/products/fan-orient.png', // Orient ceiling fan
+    '/products/fan-havells.png', // Havells ceiling fan
+    '/products/fan-orient.png',
+    '/products/fan-havells.png',
+    '/products/fan-orient.png'
+  ],
+  'Bikes': [
+    '/products/bike-pulsar.png', // Bajaj Pulsar
+    '/products/bike-apache.png', // TVS Apache
+    '/products/bike-pulsar.png',
+    '/products/bike-apache.png',
+    '/products/bike-pulsar.png'
   ]
 };
 
@@ -207,6 +228,72 @@ const products = [
     images: getCategoryImages('Accessories', 1, 1),
     stock: 150,
     brand: 'Volt Essentials'
+  },
+
+  /* ================= LED TV ================= */
+  {
+    name: 'Sony Bravia 55" 4K Ultra HD Smart LED TV',
+    description: 'Experience stunning 4K HDR picture quality with Sony TRILUMINOS display technology. Features Google TV, Dolby Vision, and built-in voice assistant support.',
+    category: 'LED TV',
+    price: 799,
+    compareAtPrice: 999,
+    images: getCategoryImages('LED TV', 0, 2),
+    stock: 25,
+    brand: 'Sony'
+  },
+  {
+    name: 'Samsung Crystal UHD 65" 4K Smart TV',
+    description: 'Immersive viewing with Crystal Processor 4K. Features AirSlim design, Smart Hub, and seamless connectivity with Samsung ecosystem.',
+    category: 'LED TV',
+    price: 899,
+    compareAtPrice: 1099,
+    images: getCategoryImages('LED TV', 1, 2),
+    stock: 30,
+    brand: 'Samsung'
+  },
+
+  /* ================= FANS ================= */
+  {
+    name: 'Orient Electric Aeroquiet 1200mm Ceiling Fan',
+    description: 'Ultra-silent operation with aerodynamic blade design. Energy-efficient BLDC motor with remote control and LED indicators.',
+    category: 'Fans',
+    price: 89,
+    compareAtPrice: 119,
+    images: getCategoryImages('Fans', 0, 2),
+    stock: 150,
+    brand: 'Orient Electric'
+  },
+  {
+    name: 'Havells Leganza 1200mm Premium Ceiling Fan',
+    description: 'Elegant design with powerful air delivery. Features dust-resistant coating, copper motor, and comes with 2-year warranty.',
+    category: 'Fans',
+    price: 75,
+    compareAtPrice: 99,
+    images: getCategoryImages('Fans', 1, 2),
+    stock: 200,
+    brand: 'Havells'
+  },
+
+  /* ================= BIKES ================= */
+  {
+    name: 'Bajaj Pulsar NS200',
+    description: 'The naked sports bike with 199.5cc liquid-cooled engine, delivering 24.5 PS power. Features perimeter frame, clip-on handlebars, and digital console.',
+    category: 'Bikes',
+    price: 1599,
+    compareAtPrice: 1799,
+    images: getCategoryImages('Bikes', 0, 2),
+    stock: 15,
+    brand: 'Bajaj'
+  },
+  {
+    name: 'TVS Apache RTR 160 4V',
+    description: 'Race-tuned 159.7cc engine with patented Race Tuned Fuel Injection. Features Glide Through Technology, SmartXonnect, and race-inspired design.',
+    category: 'Bikes',
+    price: 1349,
+    compareAtPrice: 1499,
+    images: getCategoryImages('Bikes', 1, 2),
+    stock: 20,
+    brand: 'TVS'
   }
 ];
 

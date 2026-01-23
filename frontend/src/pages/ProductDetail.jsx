@@ -43,11 +43,16 @@ const ProductDetail = () => {
   const [loadingRelated, setLoadingRelated] = useState(false);
   const [loadingViewed, setLoadingViewed] = useState(false);
 
+  // Demand forecasting state
+  const [forecast, setForecast] = useState(null);
+  const [loadingForecast, setLoadingForecast] = useState(false);
+
   useEffect(() => {
     dispatch(fetchProduct(id));
     fetchReviews();
     loadRelatedProducts();
     loadViewedProducts();
+    loadDemandForecast();
   }, [id, dispatch]);
 
   useEffect(() => {
@@ -149,6 +154,24 @@ const ProductDetail = () => {
       console.error('Failed to load viewed products:', error);
     } finally {
       setLoadingViewed(false);
+    }
+  };
+
+  // Load demand forecast for this product
+  const loadDemandForecast = async () => {
+    if (!id) return;
+
+    setLoadingForecast(true);
+    try {
+      const response = await api.get(`/analytics/forecast/${id}`);
+      if (response.data.success) {
+        setForecast(response.data);
+      }
+    } catch (error) {
+      console.error('Failed to load demand forecast:', error);
+      setForecast(null);
+    } finally {
+      setLoadingForecast(false);
     }
   };
 
@@ -280,8 +303,8 @@ const ProductDetail = () => {
                         key={size}
                         onClick={() => setSelectedVariant({ ...selectedVariant, size })}
                         className={`px-4 py-2 border rounded-md ${selectedVariant.size === size
-                            ? 'border-primary bg-primary text-primary-foreground'
-                            : 'border-input'
+                          ? 'border-primary bg-primary text-primary-foreground'
+                          : 'border-input'
                           }`}
                       >
                         {size}
@@ -300,8 +323,8 @@ const ProductDetail = () => {
                         key={color}
                         onClick={() => setSelectedVariant({ ...selectedVariant, color })}
                         className={`px-4 py-2 border rounded-md ${selectedVariant.color === color
-                            ? 'border-primary bg-primary text-primary-foreground'
-                            : 'border-input'
+                          ? 'border-primary bg-primary text-primary-foreground'
+                          : 'border-input'
                           }`}
                       >
                         {color}
@@ -320,8 +343,8 @@ const ProductDetail = () => {
                         key={storage}
                         onClick={() => setSelectedVariant({ ...selectedVariant, storage })}
                         className={`px-4 py-2 border rounded-md ${selectedVariant.storage === storage
-                            ? 'border-primary bg-primary text-primary-foreground'
-                            : 'border-input'
+                          ? 'border-primary bg-primary text-primary-foreground'
+                          : 'border-input'
                           }`}
                       >
                         {storage}
@@ -413,6 +436,121 @@ const ProductDetail = () => {
               )}
             </CardContent>
           </Card>
+
+          {/* AI-Powered Demand Forecast */}
+          {!loadingForecast && forecast && (
+            <Card className="mt-6 border-2 border-blue-500/20 bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-blue-950/20 dark:to-purple-950/20">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-semibold">AI-Powered Demand Forecast</h3>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-2xl">📦</span>
+                      <p className="text-sm text-muted-foreground">Sold Last 7 Days</p>
+                    </div>
+                    <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                      {forecast.last7DaysSold} units
+                    </p>
+                  </div>
+
+                  <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-2xl">📈</span>
+                      <p className="text-sm text-muted-foreground">Expected Next 7 Days</p>
+                    </div>
+                    <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                      {forecast.forecastNext7Days} units
+                    </p>
+                  </div>
+                </div>
+
+                {forecast.needsRestock && (
+                  <div className={`rounded-lg p-4 ${forecast.restockPriority === 'high'
+                      ? 'bg-red-50 dark:bg-red-950/30 border-2 border-red-200 dark:border-red-800'
+                      : forecast.restockPriority === 'medium'
+                        ? 'bg-yellow-50 dark:bg-yellow-950/30 border-2 border-yellow-200 dark:border-yellow-800'
+                        : 'bg-blue-50 dark:bg-blue-950/30 border-2 border-blue-200 dark:border-blue-800'
+                    }`}>
+                    <div className="flex items-start gap-3">
+                      <span className="text-2xl mt-0.5">⚠️</span>
+                      <div className="flex-1">
+                        <p className={`font-semibold mb-1 ${forecast.restockPriority === 'high'
+                            ? 'text-red-700 dark:text-red-400'
+                            : forecast.restockPriority === 'medium'
+                              ? 'text-yellow-700 dark:text-yellow-400'
+                              : 'text-blue-700 dark:text-blue-400'
+                          }`}>
+                          {forecast.message}
+                        </p>
+                        {forecast.daysUntilStockOut !== null && (
+                          <p className="text-sm text-muted-foreground">
+                            🕒 Current stock: {forecast.currentStock} units
+                            {forecast.daysUntilStockOut > 0 && (
+                              <span> • Estimated stockout: ~{Math.ceil(forecast.daysUntilStockOut)} days</span>
+                            )}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {!forecast.needsRestock && forecast.last7DaysSold > 0 && (
+                  <div className="rounded-lg p-4 bg-green-50 dark:bg-green-950/30 border-2 border-green-200 dark:border-green-800">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">✅</span>
+                      <div className="flex-1">
+                        <p className="font-semibold text-green-700 dark:text-green-400">
+                          {forecast.message}
+                        </p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Current stock: {forecast.currentStock} units • Daily average: {forecast.dailyAverage} units/day
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {forecast.last7DaysSold === 0 && (
+                  <div className="rounded-lg p-4 bg-gray-50 dark:bg-gray-800/50 border-2 border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">📊</span>
+                      <p className="text-muted-foreground">
+                        {forecast.message}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <p className="text-xs text-muted-foreground text-center">
+                    💡 Forecast based on historical sales trends and intelligent business rules
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Loading state for forecast */}
+          {loadingForecast && (
+            <Card className="mt-6">
+              <CardContent className="p-6">
+                <Skeleton className="h-8 w-3/4 mb-4" />
+                <div className="grid grid-cols-2 gap-4">
+                  <Skeleton className="h-24 w-full" />
+                  <Skeleton className="h-24 w-full" />
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
 

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Lottie from 'lottie-react';
 import { FaTimes } from 'react-icons/fa';
-import API_URL from '../utils/api';
+import api from '../lib/api';
 import chatbotAnimation from '../assets/animations/chatbot.json';
 
 const INITIAL_MESSAGE = {
@@ -36,18 +36,8 @@ const Chatbot = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/api/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: trimmed })
-      });
-
-      if (!response.ok) {
-        throw new Error('Chat request failed');
-      }
-
-      const data = await response.json();
-      const aiReply = data?.content || 'Sorry, I could not process that right now.';
+      const response = await api.post('/chat', { message: trimmed });
+      const aiReply = response.data?.content || 'Sorry, I could not process that right now.';
       setMessages(prev => [...prev, { role: 'assistant', content: aiReply }]);
     } catch (error) {
       setMessages(prev => [
@@ -96,11 +86,10 @@ const Chatbot = () => {
                   className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-[80%] rounded-2xl px-4 py-2 leading-relaxed shadow-sm ${
-                      isUser
-                        ? 'bg-indigo-600 text-white'
-                        : 'bg-gray-900 text-gray-100 border border-gray-800'
-                    }`}
+                    className={`max-w-[80%] rounded-2xl px-4 py-2 leading-relaxed shadow-sm ${isUser
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-gray-900 text-gray-100 border border-gray-800'
+                      }`}
                   >
                     {message.content}
                   </div>

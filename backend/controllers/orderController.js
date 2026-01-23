@@ -2,9 +2,6 @@ import Order from '../models/Order.js';
 import Product from '../models/Product.js';
 import Cart from '../models/Cart.js';
 
-// @desc    Create new order
-// @route   POST /api/orders
-// @access  Private
 export const createOrder = async (req, res, next) => {
   try {
     const {

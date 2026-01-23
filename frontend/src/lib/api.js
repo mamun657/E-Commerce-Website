@@ -43,12 +43,18 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+      const path = window.location.pathname;
+
+      // Prevent auto logout during checkout flow
+      // This allows checkout validation errors without forcing logout
+      if (!path.includes('checkout')) {
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+        }
+        delete api.defaults.headers.common.Authorization;
+        window.location.href = '/login';
       }
-      delete api.defaults.headers.common.Authorization;
-      window.location.href = '/login';
     }
     return Promise.reject(error);
   }

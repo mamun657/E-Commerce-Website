@@ -74,20 +74,26 @@ const ProductCard = ({ product, onAddToCart }) => {
             </div>
           </div>
 
+          {/* Price Display: BDT Primary, USD Secondary */}
           <div className="space-y-1">
             <div className="flex items-end gap-2">
+              {/* Primary BDT Price */}
               <span className="text-2xl font-bold tracking-tight text-primary drop-shadow-[0_0_30px_rgba(78,243,195,0.35)]">
-                {priceDisplay.formatted}
+                {approxBdt.formatted}
               </span>
+              {/* Old Price (strikethrough) in BDT */}
               {compareDisplay && (
                 <span className="text-sm text-muted-foreground line-through">
-                  {compareDisplay.formatted}
+                  {formatBDT(Number(product.compareAtPrice) || 0, {
+                    rate: DEFAULT_EXCHANGE_RATES.USD_TO_BDT
+                  }).formatted}
                 </span>
               )}
             </div>
-            {approxBdt.formattedLabel && approxBdt.formattedLabel !== '-' && (
-              <p className="text-xs text-muted-foreground">Approx. {approxBdt.formattedLabel}</p>
-            )}
+            {/* Secondary USD Price */}
+            <p className="text-xs text-muted-foreground">
+              Approx. {priceDisplay.formatted}
+            </p>
           </div>
 
           <Button

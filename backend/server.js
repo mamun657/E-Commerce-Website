@@ -8,6 +8,12 @@ import { dirname } from "path";
 // Load environment variables FIRST
 dotenv.config();
 
+// Debug: Verify Stripe key is loaded
+console.log('🔍 Environment check:');
+console.log('   STRIPE_SECRET_KEY:', process.env.STRIPE_SECRET_KEY ? `${process.env.STRIPE_SECRET_KEY.slice(0, 15)}...` : '❌ NOT FOUND');
+console.log('   JWT_SECRET:', process.env.JWT_SECRET ? '✅ Loaded' : '❌ NOT FOUND');
+console.log('   MONGO_URI:', process.env.MONGO_URI ? '✅ Loaded' : '❌ NOT FOUND');
+
 // Utils for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -20,6 +26,7 @@ import orderRoutes from "./routes/orderRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import chatRoutes from "./routes/chat.js";
+import analyticsRoutes from "./routes/analyticsRoutes.js";
 
 // Import controllers & utils
 import { stripeWebhook } from "./controllers/paymentController.js";
@@ -31,7 +38,7 @@ const app = express();
 /* =======================
    ENV VALIDATION
 ======================= */
-const requiredEnvVars = ["MONGO_URI", "JWT_SECRET", "GROQ_API_KEY"];
+const requiredEnvVars = ["MONGO_URI", "JWT_SECRET", "GROQ_API_KEY", "STRIPE_SECRET_KEY"];
 const missingEnvVars = requiredEnvVars.filter((v) => !process.env[v]);
 
 if (missingEnvVars.length) {
@@ -86,6 +93,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/chat", chatRoutes); // ✅ CHAT ROUTE (ONLY ONCE)
+app.use("/api/analytics", analyticsRoutes); // ✅ ANALYTICS ROUTE - Public demand forecasting
 
 /* =======================
    ERROR HANDLER

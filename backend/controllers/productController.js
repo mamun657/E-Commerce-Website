@@ -1,9 +1,6 @@
 import Product from '../models/Product.js';
 import Review from '../models/Review.js';
 
-// @desc    Get all products with filtering, sorting, and pagination
-// @route   GET /api/products
-// @access  Public
 export const getProducts = async (req, res, next) => {
   try {
     const {
@@ -17,8 +14,6 @@ export const getProducts = async (req, res, next) => {
       limit = 12
     } = req.query;
 
-    // Build query
-    // Use $ne:false so older documents without an explicit `active` flag still appear
     const query = { active: { $ne: false } };
 
     if (category && category.toLowerCase() !== 'all') {
