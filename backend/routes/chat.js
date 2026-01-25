@@ -5,25 +5,25 @@ import Product from "../models/Product.js";
 const router = express.Router();
 
 /**
- * Parse user message to extract budget and category hints
+ * Parse user intent (budget + category)
  */
 const parseUserIntent = (message) => {
-  const lowerMsg = message.toLowerCase();
+  const text = message.toLowerCase();
 
-  // Extract budget (e.g., "50000", "50k")
+  // Budget (optional, not used for filtering)
   let budget = null;
-  const budgetMatch =
-    lowerMsg.match(/(\d{1,3}(?:,?\d{3})*)\s*(?:tk|taka|bdt)?/i) ||
-    lowerMsg.match(/(\d+)k/i);
+  const match =
+    text.match(/(\d{1,3}(?:,?\d{3})*)\s*(?:tk|taka|bdt)?/i) ||
+    text.match(/(\d+)k/i);
 
-  if (budgetMatch) {
-    budget = lowerMsg.includes("k")
-      ? parseInt(budgetMatch[1]) * 1000
-      : parseInt(budgetMatch[1].replace(/,/g, ""));
+  if (match) {
+    budget = text.includes("k")
+      ? parseInt(match[1]) * 1000
+      : parseInt(match[1].replace(/,/g, ""));
   }
 
-  // Detect category
-  const categoryKeywords = {
+  // Category detection
+  const categories = {
     "Mobile Phones": ["phone", "mobile", "iphone", "samsung", "xiaomi"],
     Headphones: ["headphone", "earphone", "earbuds"],
     Laptops: ["laptop", "notebook", "macbook"],
@@ -33,8 +33,8 @@ const parseUserIntent = (message) => {
   };
 
   let category = null;
-  for (const [cat, keywords] of Object.entries(categoryKeywords)) {
-    if (keywords.some((k) => lowerMsg.includes(k))) {
+  for (const [cat, keys] of Object.entries(categories)) {
+    if (keys.some((k) => text.includes(k))) {
       category = cat;
       break;
     }
@@ -58,7 +58,7 @@ const formatProductsForAI = (products) => {
           p.stock > 0 ? "In Stock" : "Out of Stock"
         }${p.brand ? ` | Brand: ${p.brand}` : ""}${
           p.description
-            ? ` | Features: ${p.description.substring(0, 100)}`
+            ? ` | Features: ${p.description.slice(0, 100)}`
             : ""
         }`
     )
@@ -77,11 +77,11 @@ router.post("/", async (req, res) => {
     if (!message || typeof message !== "string") {
       return res.status(400).json({
         error: "Invalid message",
-        content: "Please type a valid message.",
+        content: "Please enter a valid message.",
       });
     }
 
-    // ✅ API key (ONLY ONCE)
+    // ✅ API key (declare ONCE)
     const apiKey = process.env.GROQ_API_KEY?.trim();
     if (!apiKey) {
       console.error("❌ GROQ_API_KEY missing");
@@ -109,17 +109,17 @@ router.post("/", async (req, res) => {
 
     // System prompt
     const systemPrompt = `
-You are a helpful shopping assistant for "Apnar Dokan".
+You are a friendly shopping assistant for "Apnar Dokan".
 
 RULES:
 - NEVER mention prices or currency.
-- ONLY recommend from the product list.
-- Keep reply short (4-5 lines).
+- ONLY recommend products from the list.
+- Keep replies short (max 4–5 lines).
 
 AVAILABLE PRODUCTS:
 ${productContext}
 
-If product not available, politely say so.
+If no product is available, politely say so.
 `;
 
     // Call Groq API
@@ -148,7 +148,7 @@ If product not available, politely say so.
     if (!response.ok) {
       console.error("❌ Groq error:", data);
       return res.status(500).json({
-        error: data.error?.message || "Groq error",
+        error: data.error?.message || "Groq API error",
         content: "AI service error. Please try again later.",
       });
     }
@@ -157,7 +157,7 @@ If product not available, politely say so.
 
     if (!reply?.content) {
       return res.status(500).json({
-        error: "Empty response",
+        error: "Empty reply",
         content: "No response generated. Please try again.",
       });
     }
