@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card'
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Package, Heart } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import api from '../lib/api';
 import { motion } from 'framer-motion';
 import { formatBDT } from '../utils/currency';
@@ -13,7 +13,9 @@ import Settings from '../components/settings/Settings';
 
 const Dashboard = () => {
   const { user, setUser } = useUser();
-  const [activeTab, setActiveTab] = useState('profile');
+  const [searchParams] = useSearchParams();
+  const tabFromUrl = searchParams.get('tab');
+  const [activeTab, setActiveTab] = useState(tabFromUrl || 'profile');
   const [profileData, setProfileData] = useState({
     name: user?.name || '',
     email: user?.email || '',

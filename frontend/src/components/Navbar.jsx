@@ -269,7 +269,7 @@ const Navbar = () => {
                   <>
                     <div className="space-y-2">
                       <DropdownLink to="/dashboard" label="Profile" description="Personal details" />
-                      <DropdownLink to="/orders" label="Orders" description="Track & manage" />
+                      <DropdownLink to="/dashboard?tab=orders" label="Orders" description="Track & manage" />
                     </div>
                     <Button
                       variant="outline"
