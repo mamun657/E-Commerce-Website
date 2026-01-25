@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/slices/authSlice';
-import { ShoppingCart, LogOut, Menu, X, Moon, Sun, Globe2, ArrowRight, MapPin } from 'lucide-react';
+import { ShoppingCart, LogOut, Menu, X, Moon, Sun, Globe2, ArrowRight, MapPin, Store } from 'lucide-react';
 import { Button } from './ui/Button';
 import HoverDropdown from './HoverDropdown';
 import { useState, useEffect } from 'react';
@@ -334,6 +334,15 @@ const Navbar = () => {
               </div>
             </HoverDropdown>
 
+            {/* Mobile Shop Button */}
+            <Link
+              to="/shop"
+              className="md:hidden flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-white/5 text-foreground transition hover:border-primary/60 hover:bg-white/10 hover:shadow-[0_0_0_1px_rgba(34,211,238,0.35)]"
+              aria-label="Shop"
+            >
+              <Store size={20} />
+            </Link>
+
             {/* Mobile Menu Button */}
             <button
               className="md:hidden flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-white/5 text-foreground transition hover:border-primary/60 hover:bg-white/10 hover:shadow-[0_0_0_1px_rgba(34,211,238,0.35)]"
@@ -355,31 +364,33 @@ const Navbar = () => {
             >
               <Link
                 to="/shop"
-                className="block py-2 hover:text-primary transition-colors"
+                className="flex items-center gap-3 rounded-xl px-3 py-3 text-base font-medium text-foreground transition hover:bg-muted/60 hover:text-primary"
                 onClick={() => setMobileMenuOpen(false)}
               >
+                <Store size={18} />
                 Shop
               </Link>
               {isAuthenticated && (
                 <>
                   <Link
                     to="/dashboard"
-                    className="block py-2 hover:text-primary transition-colors"
+                    className="flex items-center gap-3 rounded-xl px-3 py-3 text-base font-medium text-foreground transition hover:bg-muted/60 hover:text-primary"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Dashboard
                   </Link>
                   <Link
                     to="/cart"
-                    className="block py-2 hover:text-primary transition-colors"
+                    className="flex items-center gap-3 rounded-xl px-3 py-3 text-base font-medium text-foreground transition hover:bg-muted/60 hover:text-primary"
                     onClick={() => setMobileMenuOpen(false)}
                   >
+                    <ShoppingCart size={18} />
                     Cart ({cartItemCount})
                   </Link>
                   {isAdmin && (
                     <Link
                       to="/admin"
-                      className="block py-2 hover:text-primary transition-colors"
+                      className="flex items-center gap-3 rounded-xl px-3 py-3 text-base font-medium text-foreground transition hover:bg-muted/60 hover:text-primary"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       Admin Panel
