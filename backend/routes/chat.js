@@ -106,7 +106,7 @@ router.post("/", async (req, res) => {
 
     // ✅ Build system prompt with REAL products (NO PRICES)
     const systemPrompt = `
-You are a friendly shopping assistant for "Kinne Felun" e-commerce store.
+You are a friendly shopping assistant for "Apnar Dokan" e-commerce store.
 
 **STRICT RULES - MUST FOLLOW:**
 1. NEVER mention prices, discounts, or currency (BDT, ৳, Taka) in your responses.

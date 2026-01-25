@@ -68,16 +68,23 @@ const Navbar = () => {
     navigate(isAuthenticated ? '/dashboard' : '/login');
   };
 
+  // Determine logo destination based on auth state and role
+  const getLogoDestination = () => {
+    if (!isAuthenticated) return '/';
+    if (isAdmin) return '/admin';
+    return '/dashboard';
+  };
+
   return (
     <nav className="sticky top-0 z-50 border-b border-border/70 bg-[#0b0f14]/80 backdrop-blur-xl shadow-[0_10px_60px_rgba(0,0,0,0.55)]">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link
-            to="/"
+            to={getLogoDestination()}
             className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-emerald-400 via-cyan-400 to-purple-500 bg-clip-text text-transparent drop-shadow-[0_10px_40px_rgba(56,189,248,0.35)]"
           >
-            Kinne Felun
+            Apnar Dokan
           </Link>
 
           {/* Desktop Navigation */}
@@ -113,13 +120,6 @@ const Navbar = () => {
 
           {/* Right Side Actions */}
           <div className="flex items-center space-x-3">
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-white/5 text-foreground transition hover:border-primary/60 hover:bg-white/10 hover:shadow-[0_0_0_1px_rgba(34,211,238,0.35)]"
-            >
-              {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
-
             {!isAuthenticated && (
               <div className="hidden lg:flex items-center space-x-2">
                 <Link to="/login">
@@ -330,21 +330,6 @@ const Navbar = () => {
                     {locale.country}
                   </p>
                   <p className="text-xs text-muted-foreground">{locale.currency}</p>
-                </div>
-                <div className="space-y-2">
-                  {['English (US)', 'English (UK)', 'Deutsch'].map((option) => (
-                    <button
-                      key={option}
-                      type="button"
-                      className="flex w-full items-center justify-between rounded-xl border border-transparent px-3 py-2 text-sm font-medium transition hover:border-border hover:bg-muted/50"
-                    >
-                      <span>{option}</span>
-                      {option === locale.language && (
-                        <span className="text-xs text-primary">Selected</span>
-                      )}
-                    </button>
-                  ))}
-                  <p className="text-xs text-muted-foreground">More languages coming soon.</p>
                 </div>
               </div>
             </HoverDropdown>

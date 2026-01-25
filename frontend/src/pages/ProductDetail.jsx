@@ -10,7 +10,7 @@ import { ShoppingCart, Star, Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import api from '../lib/api';
-import { DEFAULT_EXCHANGE_RATES, formatBDT, formatUSD } from '../utils/currency';
+import { DEFAULT_EXCHANGE_RATES, formatBDT } from '../utils/currency';
 import { getPrimaryImage, FALLBACK_PRODUCT_IMAGE } from '../utils/image';
 import ProductCard from '../components/ProductCard';
 import {
@@ -212,13 +212,14 @@ const ProductDetail = () => {
     ? product.images
     : [getPrimaryImage(product.images, FALLBACK_PRODUCT_IMAGE)];
   const displayedImage = galleryImages[selectedImage] || getPrimaryImage(galleryImages, FALLBACK_PRODUCT_IMAGE);
-  const priceDisplay = formatUSD(Number(product.price) || 0);
-  const compareDisplay = product.compareAtPrice
-    ? formatUSD(Number(product.compareAtPrice) || 0)
-    : null;
   const approxBdt = formatBDT(Number(product.price) || 0, {
     rate: DEFAULT_EXCHANGE_RATES.USD_TO_BDT
   });
+  const compareAtPriceBdt = product.compareAtPrice
+    ? formatBDT(Number(product.compareAtPrice) || 0, {
+        rate: DEFAULT_EXCHANGE_RATES.USD_TO_BDT
+      })
+    : null;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -275,18 +276,15 @@ const ProductDetail = () => {
             <span className="text-muted-foreground">{product.category}</span>
           </div>
 
-          <div className="mb-6 space-y-1">
+          <div className="mb-6">
             <div className="flex items-end gap-3">
-              <span className="text-4xl font-bold text-primary">{priceDisplay.formatted}</span>
-              {compareDisplay && (
+              <span className="text-4xl font-bold text-primary">{approxBdt.formatted}</span>
+              {compareAtPriceBdt && (
                 <span className="text-xl text-muted-foreground line-through">
-                  {compareDisplay.formatted}
+                  {compareAtPriceBdt.formatted}
                 </span>
               )}
             </div>
-            {approxBdt.formattedLabel && approxBdt.formattedLabel !== '-' && (
-              <p className="text-sm text-muted-foreground">Approx. {approxBdt.formattedLabel}</p>
-            )}
           </div>
 
           <p className="text-muted-foreground mb-6">{product.description}</p>

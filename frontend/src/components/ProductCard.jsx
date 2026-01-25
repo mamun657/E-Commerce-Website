@@ -4,17 +4,18 @@ import { motion } from 'framer-motion';
 import { ShoppingCart } from 'lucide-react';
 import { Card, CardContent } from './ui/Card';
 import { Button } from './ui/Button';
-import { DEFAULT_EXCHANGE_RATES, formatBDT, formatUSD } from '../utils/currency';
+import { DEFAULT_EXCHANGE_RATES, formatBDT } from '../utils/currency';
 import { getPrimaryImage, FALLBACK_PRODUCT_IMAGE } from '../utils/image';
 
 const ProductCard = ({ product, onAddToCart }) => {
-  const priceDisplay = formatUSD(Number(product.price) || 0);
-  const compareDisplay = product.compareAtPrice
-    ? formatUSD(Number(product.compareAtPrice) || 0)
-    : null;
   const approxBdt = formatBDT(Number(product.price) || 0, {
     rate: DEFAULT_EXCHANGE_RATES.USD_TO_BDT
   });
+  const compareAtPriceBdt = product.compareAtPrice
+    ? formatBDT(Number(product.compareAtPrice) || 0, {
+        rate: DEFAULT_EXCHANGE_RATES.USD_TO_BDT
+      })
+    : null;
   const ratingValue = Number(product.rating?.average) || 0;
   const ratingLabel = ratingValue > 0 ? ratingValue.toFixed(1) : '0.0';
   const isOutOfStock = (product.stock ?? 0) <= 0;
@@ -74,26 +75,18 @@ const ProductCard = ({ product, onAddToCart }) => {
             </div>
           </div>
 
-          {/* Price Display: BDT Primary, USD Secondary */}
-          <div className="space-y-1">
-            <div className="flex items-end gap-2">
-              {/* Primary BDT Price */}
-              <span className="text-2xl font-bold tracking-tight text-primary drop-shadow-[0_0_30px_rgba(78,243,195,0.35)]">
-                {approxBdt.formatted}
+          {/* Price Display: BDT Only */}
+          <div className="flex items-end gap-2">
+            {/* Primary BDT Price */}
+            <span className="text-2xl font-bold tracking-tight text-primary drop-shadow-[0_0_30px_rgba(78,243,195,0.35)]">
+              {approxBdt.formatted}
+            </span>
+            {/* Old Price (strikethrough) in BDT */}
+            {compareAtPriceBdt && (
+              <span className="text-sm text-muted-foreground line-through">
+                {compareAtPriceBdt.formatted}
               </span>
-              {/* Old Price (strikethrough) in BDT */}
-              {compareDisplay && (
-                <span className="text-sm text-muted-foreground line-through">
-                  {formatBDT(Number(product.compareAtPrice) || 0, {
-                    rate: DEFAULT_EXCHANGE_RATES.USD_TO_BDT
-                  }).formatted}
-                </span>
-              )}
-            </div>
-            {/* Secondary USD Price */}
-            <p className="text-xs text-muted-foreground">
-              Approx. {priceDisplay.formatted}
-            </p>
+            )}
           </div>
 
           <Button

@@ -25,7 +25,7 @@ const Landing = () => {
                 >
                   Welcome to{' '}
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-500 drop-shadow-[0_15px_60px_rgba(56,189,248,0.35)]">
-                    Kinne Felun
+                    Apnar Dokan
                   </span>
                 </motion.h1>
 

@@ -77,7 +77,7 @@ const Login = ({ defaultMode = 'login' }) => {
             <CardDescription className="text-center">
               {isLogin
                 ? 'Sign in to your account to continue'
-                : 'Sign up to get started with Kinne Felun'}
+                : 'Sign up to get started with Apnar Dokan'}
             </CardDescription>
           </CardHeader>
           <CardContent>
