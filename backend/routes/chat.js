@@ -66,14 +66,30 @@ router.post("/", async (req, res) => {
 
     // ✅ Validate input
     if (!message || typeof message !== "string") {
-      return res.status(400).json({ error: "Invalid message" });
+      return res.status(400).json({ 
+        error: "Invalid message",
+        content: "Please enter a valid message."
+      });
     }
 
-    // ✅ Validate API key
-    if (!process.env.GROQ_API_KEY) {
-      console.error("❌ GROQ_API_KEY missing");
-      return res.status(500).json({ error: "API key missing" });
+    // ✅ Validate API key (with debug info)
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) {
+      console.error("❌ GROQ_API_KEY is not set in environment variables");
+      return res.status(500).json({ 
+        error: "API key missing",
+        content: "The AI service is not configured. Please contact support."
+      });
     }
+    
+    // Debug: Log key format (safe - only shows prefix)
+    console.log("🔑 GROQ_API_KEY format check:", {
+      exists: !!apiKey,
+      length: apiKey.length,
+      prefix: apiKey.substring(0, 4),
+      hasSpaces: apiKey !== apiKey.trim(),
+      hasQuotes: apiKey.includes('"') || apiKey.includes("'")
+    });
 
     // ✅ Parse user intent (budget, category)
     const { budget, category } = parseUserIntent(message);
@@ -136,12 +152,14 @@ User's query category: ${category || 'General browsing'}
 `;
 
     // ✅ Call Groq API with product context
+    const apiKey = process.env.GROQ_API_KEY.trim(); // Trim any whitespace
+    
     const response = await fetch(
       "https://api.groq.com/openai/v1/chat/completions",
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+          Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -157,22 +175,53 @@ User's query category: ${category || 'General browsing'}
 
     const data = await response.json();
 
+    // Debug: Log full response structure
+    console.log("📥 Groq API response status:", response.status);
+    
     if (!response.ok) {
-      console.error("❌ Groq API error:", data);
-      return res.status(500).json({ error: "Groq API failed" });
+      console.error("❌ Groq API error:", JSON.stringify(data, null, 2));
+      
+      // Handle specific Groq error codes
+      const errorCode = data.error?.code || 'unknown';
+      const errorMessage = data.error?.message || 'Unknown error';
+      
+      let userMessage = "Sorry, I'm having trouble connecting to the AI service.";
+      
+      if (errorCode === 'invalid_api_key') {
+        console.error("🔴 CRITICAL: Invalid Groq API key. Check GROQ_API_KEY in Render environment variables.");
+        userMessage = "AI service configuration error. Please contact support.";
+      } else if (errorCode === 'rate_limit_exceeded') {
+        userMessage = "Too many requests. Please wait a moment and try again.";
+      } else if (errorCode === 'model_not_found') {
+        userMessage = "AI model unavailable. Please try again later.";
+      }
+      
+      return res.status(500).json({ 
+        error: errorMessage,
+        code: errorCode,
+        content: userMessage
+      });
     }
 
     const reply = data.choices?.[0]?.message;
+    console.log("💬 Reply object:", reply);
 
-    if (!reply) {
-      return res.status(500).json({ error: "No reply from Groq" });
+    if (!reply || !reply.content) {
+      console.error("❌ No valid reply in Groq response");
+      return res.status(500).json({ 
+        error: "No reply from Groq",
+        content: "Sorry, I couldn't generate a response. Please try again."
+      });
     }
 
     // ✅ Send assistant reply to frontend
-    res.json(reply);
+    res.json({ role: reply.role || 'assistant', content: reply.content });
   } catch (err) {
-    console.error("❌ Chat error:", err);
-    res.status(500).json({ error: "Server crash" });
+    console.error("❌ Chat error:", err.message, err.stack);
+    res.status(500).json({ 
+      error: "Server error", 
+      content: "Sorry, something went wrong. Please try again later."
+    });
   }
 });
 

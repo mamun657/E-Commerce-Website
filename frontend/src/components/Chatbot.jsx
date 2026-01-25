@@ -40,9 +40,14 @@ const Chatbot = () => {
       const aiReply = response.data?.content || 'Sorry, I could not process that right now.';
       setMessages(prev => [...prev, { role: 'assistant', content: aiReply }]);
     } catch (error) {
+      console.error('Chatbot error:', error.response?.data || error.message);
+      // Try to get meaningful error message from backend
+      const errorContent = error.response?.data?.content || 
+                          error.response?.data?.error || 
+                          '⚠️ Server error. Please try again.';
       setMessages(prev => [
         ...prev,
-        { role: 'assistant', content: '⚠️ Server error. Please try again.' }
+        { role: 'assistant', content: errorContent }
       ]);
     } finally {
       setLoading(false);

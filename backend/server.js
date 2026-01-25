@@ -13,6 +13,7 @@ console.log('🔍 Environment check:');
 console.log('   STRIPE_SECRET_KEY:', process.env.STRIPE_SECRET_KEY ? `${process.env.STRIPE_SECRET_KEY.slice(0, 15)}...` : '❌ NOT FOUND');
 console.log('   JWT_SECRET:', process.env.JWT_SECRET ? '✅ Loaded' : '❌ NOT FOUND');
 console.log('   MONGO_URI:', process.env.MONGO_URI ? '✅ Loaded' : '❌ NOT FOUND');
+console.log('   GROQ_API_KEY:', process.env.GROQ_API_KEY ? `${process.env.GROQ_API_KEY.slice(0, 15)}...` : '❌ NOT FOUND');
 
 // Utils for ES modules
 const __filename = fileURLToPath(import.meta.url);
