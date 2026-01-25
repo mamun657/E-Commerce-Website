@@ -55,9 +55,9 @@ const Chatbot = () => {
   };
 
   return (
-    <div className="fixed right-4 top-4 z-50 flex flex-col items-end gap-3">
+    <div className="fixed right-4 top-3 z-50 flex flex-col items-end gap-2">
       {isOpen && (
-        <div className="w-80 sm:w-96 overflow-hidden rounded-2xl border border-gray-800 bg-[#0b1220] text-gray-100 shadow-2xl backdrop-blur">
+        <div className="w-80 sm:w-96 overflow-hidden rounded-2xl border border-gray-800 bg-[#0b1220] text-gray-100 shadow-2xl backdrop-blur mt-12">
           <div className="flex items-center justify-between border-b border-gray-800 px-4 py-3">
             <div className="flex items-center gap-2">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-500/10 text-indigo-300">
@@ -129,13 +129,13 @@ const Chatbot = () => {
       <button
         type="button"
         onClick={toggleOpen}
-        className="flex h-20 w-20 items-center justify-center rounded-full border border-gray-800 bg-[#0b1220] text-indigo-300 shadow-lg transition hover:-translate-y-0.5 hover:bg-[#111a2d]"
+        className="flex h-12 w-12 items-center justify-center rounded-full border border-gray-800 bg-[#0b1220] text-indigo-300 shadow-lg transition hover:-translate-y-0.5 hover:bg-[#111a2d] hover:border-primary/60 hover:shadow-[0_0_0_1px_rgba(34,211,238,0.35)]"
         aria-label="Toggle chatbot"
       >
         {isOpen ? (
-          <FaTimes />
+          <FaTimes className="h-4 w-4" />
         ) : (
-          <Lottie animationData={chatbotAnimation} loop className="h-16 w-16" />
+          <Lottie animationData={chatbotAnimation} loop className="h-10 w-10" />
         )}
       </button>
     </div>
