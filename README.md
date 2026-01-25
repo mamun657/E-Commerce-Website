@@ -6,7 +6,7 @@
 
 <!-- Animated subtitle -->
 <p align="center">
-  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=600&size=24&pause=1000&color=00FFCC&center=true&vCenter=true&width=800&lines=🛍+Modern+E-Commerce+Experience;⚡+React+%2B+Node.js+%2B+MongoDB;🔐+JWT+Authentication;💳+Stripe+Payments;🤖+AI+Chatbot+Integration" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=600&size=24&pause=1000&color=00FFCC&center=true&vCenter=true&width=800&lines=⚡+Modern+E-Commerce+Experience;🤖+AI+Chatbot+Integration🔐+JWT+Authentication" alt="Typing SVG" />
 </p>
 
 ---
