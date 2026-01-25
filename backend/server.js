@@ -105,11 +105,18 @@ app.use(errorHandler);
 ======================= */
 const DEFAULT_PORT = 5000;
 const REQUESTED_PORT = parseInt(process.env.PORT) || DEFAULT_PORT;
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const MAX_PORT_ATTEMPTS = 10;
 
 const startServerOnPort = (port, attempt = 1) => {
   return new Promise((resolve, reject) => {
-    if (attempt > MAX_PORT_ATTEMPTS) {
+    // In production (Render), we must use the exact PORT assigned
+    if (IS_PRODUCTION && attempt > 1) {
+      reject(new Error(`Port ${REQUESTED_PORT} is not available. In production, the assigned PORT must be used.`));
+      return;
+    }
+
+    if (!IS_PRODUCTION && attempt > MAX_PORT_ATTEMPTS) {
       reject(
         new Error(
           `Could not find available port after ${MAX_PORT_ATTEMPTS} attempts`
@@ -118,7 +125,7 @@ const startServerOnPort = (port, attempt = 1) => {
       return;
     }
 
-    const server = app.listen(port, () => {
+    const server = app.listen(port, '0.0.0.0', () => {
       console.log("\n✅ Server started successfully!");
 
       if (port !== REQUESTED_PORT) {
@@ -137,11 +144,16 @@ const startServerOnPort = (port, attempt = 1) => {
 
     server.on("error", (error) => {
       if (error.code === "EADDRINUSE") {
-        console.log(`⚠️  Port ${port} busy, trying ${port + 1}...`);
-        server.close();
-        startServerOnPort(port + 1, attempt + 1)
-          .then(resolve)
-          .catch(reject);
+        if (IS_PRODUCTION) {
+          server.close();
+          reject(new Error(`Port ${port} is already in use. Cannot auto-increment in production.`));
+        } else {
+          console.log(`⚠️  Port ${port} busy, trying ${port + 1}...`);
+          server.close();
+          startServerOnPort(port + 1, attempt + 1)
+            .then(resolve)
+            .catch(reject);
+        }
       } else {
         server.close();
         reject(error);
